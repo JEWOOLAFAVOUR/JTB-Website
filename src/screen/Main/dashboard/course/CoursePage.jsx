@@ -117,8 +117,7 @@ export default function CoursePage() {
         <div className="p-6 space-y-6">
             <Card>
                 <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                    <CardTitle>Course Management</CardTitle>
-
+                    <CardTitle className="text-xl sm:text-2xl">Course Management</CardTitle>
                     {/* Generate Channel Name */}
                     <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mt-4 sm:mt-0">
                         <Input

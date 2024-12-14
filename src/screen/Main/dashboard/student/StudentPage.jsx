@@ -65,14 +65,14 @@ export default function StudentPage() {
         },
         // Add more sample students to reach 10
         ...Array.from({ length: 8 }, (_, i) => ({
-            id: `₦{i + 3}`,
-            firstName: `Student₦{i + 3}`,
-            lastName: `LastName₦{i + 3}`,
-            matricNumber: `MTN2023₦{String(i + 3).padStart(3, '0')}`,
-            email: `student₦{i + 3}@example.com`,
+            id: `${i + 3}`,
+            firstName: `Student${i + 3}`,
+            lastName: `LastName${i + 3}`,
+            matricNumber: `MTN2023${String(i + 3).padStart(3, '0')}`,
+            email: `student${i + 3}@example.com`,
             amountSpent: Math.floor(Math.random() * 1000),
             courseCount: Math.floor(Math.random() * 6),
-            dateJoined: `2023-₦{String(i + 3).padStart(2, '0')}-01`,
+            dateJoined: `2023-${String(i + 3).padStart(2, '0')}-01`,
             status: 'Active'
         }))
     ]);
@@ -80,6 +80,8 @@ export default function StudentPage() {
     // State for search and filtering
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStudents, setSelectedStudents] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [studentsPerPage] = useState(5);
 
     // Filtering students based on search term
     const filteredStudents = useMemo(() => {
@@ -90,6 +92,16 @@ export default function StudentPage() {
             student.matricNumber.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [students, searchTerm]);
+
+    // Paginated students
+    const indexOfLastStudent = currentPage * studentsPerPage;
+    const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+    const currentStudents = filteredStudents.slice(indexOfFirstStudent, indexOfLastStudent);
+
+    // Handle page change
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     // Selection handling
     const toggleStudentSelection = (id) => {
@@ -104,15 +116,18 @@ export default function StudentPage() {
     const totalStudents = students.length;
     const totalAmountSpent = students.reduce((sum, student) => sum + student.amountSpent, 0);
 
+    // Pagination controls
+    const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+
     return (
         <div className="p-6 space-y-6">
             <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Student Management</CardTitle>
+                <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <CardTitle className="text-xl sm:text-2xl">Student Management</CardTitle>
 
                     {/* Header Actions */}
-                    <div className="flex items-center space-x-2">
-                        <Button variant="outline">
+                    <div className="flex flex-wrap sm:space-x-2 mt-4 sm:mt-0">
+                        <Button variant="outline" className="mb-2 sm:mb-0">
                             <Filter className="mr-2 h-4 w-4" /> Filters
                         </Button>
                         <Dialog>
@@ -134,19 +149,19 @@ export default function StudentPage() {
 
                 <CardContent>
                     {/* Search and Metrics */}
-                    <div className="flex items-center justify-between py-4">
-                        <div className="flex items-center space-x-4">
-                            <div className="relative">
-                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    placeholder="Search students..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="pl-8 w-[300px]"
-                                />
-                            </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4">
+                        <div className="relative flex-1 sm:w-auto">
+                            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Search students..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-8 w-full sm:w-[300px]"
+                            />
+                        </div>
 
-                            {/* Metrics Badges */}
+                        {/* Metrics Badges */}
+                        <div className="mt-4 sm:mt-0 flex space-x-2">
                             <Badge variant="secondary">
                                 Total Students: {totalStudents}
                             </Badge>
@@ -154,91 +169,100 @@ export default function StudentPage() {
                                 Total Revenue: ₦{totalAmountSpent.toFixed(2)}
                             </Badge>
                         </div>
-
-                        {/* Bulk Actions */}
-                        {selectedStudents.length > 0 && (
-                            <Button variant="destructive" size="sm">
-                                Delete {selectedStudents.length} Student(s)
-                            </Button>
-                        )}
                     </div>
+
+                    {/* Bulk Actions */}
+                    {selectedStudents.length > 0 && (
+                        <Button variant="destructive" size="sm" className="mb-4">
+                            Delete {selectedStudents.length} Student(s)
+                        </Button>
+                    )}
 
                     <Separator className="my-4" />
 
                     {/* Students Table */}
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[20px]">
-                                    <Checkbox
-                                        checked={selectedStudents.length === students.length}
-                                        onCheckedChange={() =>
-                                            setSelectedStudents(
-                                                selectedStudents.length === students.length
-                                                    ? []
-                                                    : students.map(student => student.id)
-                                            )
-                                        }
-                                    />
-                                </TableHead>
-                                <TableHead>First Name</TableHead>
-                                <TableHead>Last Name</TableHead>
-                                <TableHead>Matric Number</TableHead>
-                                <TableHead>Email</TableHead>
-                                <TableHead>Amount Spent</TableHead>
-                                <TableHead>Courses</TableHead>
-                                <TableHead>Date Joined</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredStudents.map((student) => (
-                                <TableRow key={student.id}>
-                                    <TableCell>
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[20px]">
                                         <Checkbox
-                                            checked={selectedStudents.includes(student.id)}
-                                            onCheckedChange={() => toggleStudentSelection(student.id)}
+                                            checked={selectedStudents.length === students.length}
+                                            onCheckedChange={() =>
+                                                setSelectedStudents(
+                                                    selectedStudents.length === students.length
+                                                        ? []
+                                                        : students.map(student => student.id)
+                                                )
+                                            }
                                         />
-                                    </TableCell>
-                                    <TableCell>{student.firstName}</TableCell>
-                                    <TableCell>{student.lastName}</TableCell>
-                                    <TableCell>{student.matricNumber}</TableCell>
-                                    <TableCell>{student.email}</TableCell>
-                                    <TableCell>₦{student.amountSpent.toFixed(2)}</TableCell>
-                                    <TableCell>{student.courseCount}</TableCell>
-                                    <TableCell>{student.dateJoined}</TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline">
-                                            {student.status}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent>
-                                                <DropdownMenuItem>
-                                                    View Details
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    Edit Student
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem className="text-red-500">
-                                                    Delete Student
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
+                                    </TableHead>
+                                    <TableHead>First Name</TableHead>
+                                    <TableHead>Last Name</TableHead>
+                                    <TableHead>Matric Number</TableHead>
+                                    <TableHead>Email</TableHead>
+                                    <TableHead>Amount Spent</TableHead>
+                                    <TableHead>Courses</TableHead>
+                                    <TableHead>Date Joined</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Actions</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {currentStudents.map((student) => (
+                                    <TableRow key={student.id}>
+                                        <TableCell>
+                                            <Checkbox
+                                                checked={selectedStudents.includes(student.id)}
+                                                onCheckedChange={() => toggleStudentSelection(student.id)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>{student.firstName}</TableCell>
+                                        <TableCell>{student.lastName}</TableCell>
+                                        <TableCell>{student.matricNumber}</TableCell>
+                                        <TableCell>{student.email}</TableCell>
+                                        <TableCell>₦{student.amountSpent.toFixed(2)}</TableCell>
+                                        <TableCell>{student.courseCount}</TableCell>
+                                        <TableCell>{student.dateJoined}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline">{student.status}</Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent>
+                                                    <DropdownMenuItem>View Details</DropdownMenuItem>
+                                                    <DropdownMenuItem>Edit Student</DropdownMenuItem>
+                                                    <DropdownMenuItem className="text-red-500">Delete Student</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+
+                    {/* Pagination Controls */}
+                    <div className="flex justify-center mt-4 space-x-2">
+                        {Array.from({ length: totalPages }).map((_, index) => (
+                            <Button
+                                key={index}
+                                onClick={() => handlePageChange(index + 1)}
+                                size="sm"
+                                variant={currentPage === index + 1 ? "primary" : "outline"}
+                            >
+                                {index + 1}
+                            </Button>
+                        ))}
+                    </div>
                 </CardContent>
             </Card>
         </div>
     );
 }
+
