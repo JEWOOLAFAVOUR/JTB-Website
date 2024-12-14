@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { AppSidebar } from "../../../../components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import {
 import { AlignJustify } from "lucide-react";
 
 export default function AdminDashboardLayout() {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false); // State for toggling sidebar
     const user = {
         name: "John Doe",
@@ -26,6 +27,10 @@ export default function AdminDashboardLayout() {
     const toggleSidebar = () => {
         setIsOpen(!isOpen);
     };
+
+    const handleLogout = () => {
+
+    }
 
     return (
         <SidebarProvider>
@@ -72,7 +77,7 @@ export default function AdminDashboardLayout() {
                                         <AlignJustify className="h-6 w-6" />
                                     </MenubarTrigger>
                                     <MenubarContent>
-                                        <MenubarItem>
+                                        <MenubarItem onClick={() => navigate("/admin/profile")}>
                                             Profile
                                             <MenubarShortcut>⌘P</MenubarShortcut>
                                         </MenubarItem>
@@ -82,7 +87,7 @@ export default function AdminDashboardLayout() {
                                             <MenubarShortcut>⌘S</MenubarShortcut>
                                         </MenubarItem>
                                         <MenubarSeparator />
-                                        <MenubarItem>
+                                        <MenubarItem onClick={() => handleLogout()} >
                                             Logout
                                             <MenubarShortcut>⌘Q</MenubarShortcut>
                                         </MenubarItem>

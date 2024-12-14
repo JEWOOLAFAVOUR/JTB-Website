@@ -8,6 +8,7 @@ import CoursePage from '../screen/Main/dashboard/course/CoursePage';
 import ProtectedRoute from './protectedRoute';
 import StudentPage from '../screen/Main/dashboard/student/StudentPage';
 import TransactionPage from '../screen/Main/dashboard/transaction/TransactionPage';
+import ProfilePage from '../screen/Main/dashboard/profile/ProfilePage';
 
 const Routes = () => {
 
@@ -47,6 +48,10 @@ const Routes = () => {
                         {
                             path: "transaction",
                             element: <TransactionPage />,
+                        },
+                        {
+                            path: "profile",
+                            element: <ProfilePage />,
                         },
                         {
                             path: "*",
