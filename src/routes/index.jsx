@@ -9,6 +9,7 @@ import ProtectedRoute from './protectedRoute';
 import StudentPage from '../screen/Main/dashboard/student/StudentPage';
 import TransactionPage from '../screen/Main/dashboard/transaction/TransactionPage';
 import ProfilePage from '../screen/Main/dashboard/profile/ProfilePage';
+import CourseDetail from '../screen/Main/dashboard/course/CourseDetail';
 
 const Routes = () => {
 
@@ -52,6 +53,10 @@ const Routes = () => {
                         {
                             path: "profile",
                             element: <ProfilePage />,
+                        },
+                        {
+                            path: "course/details",
+                            element: <CourseDetail />,
                         },
                         {
                             path: "*",

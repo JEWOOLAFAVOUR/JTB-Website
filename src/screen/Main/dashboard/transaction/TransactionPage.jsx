@@ -112,7 +112,7 @@ export default function TransactionPage() {
         <div className="p-6 space-y-6">
             {/* Metrics Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Card>
+                <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -123,7 +123,7 @@ export default function TransactionPage() {
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Today's Revenue</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -134,7 +134,7 @@ export default function TransactionPage() {
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Withdrawn</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
