@@ -254,8 +254,8 @@ export default function CoursePage() {
                             {filteredCourses.map((course) => (
                                 <TableRow
                                     className='cursor-pointer'
-                                    key={course.id}
                                     onClick={() => handleNavigate()}
+                                    key={course.id}
                                 >
                                     <TableCell>
                                         <Checkbox

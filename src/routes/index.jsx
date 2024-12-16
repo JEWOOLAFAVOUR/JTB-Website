@@ -10,6 +10,7 @@ import StudentPage from '../screen/Main/dashboard/student/StudentPage';
 import TransactionPage from '../screen/Main/dashboard/transaction/TransactionPage';
 import ProfilePage from '../screen/Main/dashboard/profile/ProfilePage';
 import CourseDetail from '../screen/Main/dashboard/course/CourseDetail';
+import StudentDetailsPage from '../screen/Main/dashboard/student/StudentDetailPage';
 
 const Routes = () => {
 
@@ -57,6 +58,10 @@ const Routes = () => {
                         {
                             path: "course/details",
                             element: <CourseDetail />,
+                        },
+                        {
+                            path: "student/details",
+                            element: <StudentDetailsPage />,
                         },
                         {
                             path: "*",

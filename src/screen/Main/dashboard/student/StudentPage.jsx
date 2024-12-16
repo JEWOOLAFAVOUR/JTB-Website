@@ -37,9 +37,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from 'react-router-dom';
 
 export default function StudentPage() {
     // Sample student data
+    const navigate = useNavigate();
     const [students, setStudents] = useState([
         {
             id: '1',
@@ -118,6 +120,11 @@ export default function StudentPage() {
 
     // Pagination controls
     const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+
+    const handleNavigate = async () => {
+        console.log('bbbbbbbbbbbbbbbbbb')
+        navigate('/admin/student/details')
+    }
 
     return (
         <div className="p-6 space-y-6">
@@ -210,7 +217,11 @@ export default function StudentPage() {
                             </TableHeader>
                             <TableBody>
                                 {currentStudents.map((student) => (
-                                    <TableRow key={student.id}>
+                                    <TableRow
+                                        className='cursor-pointer'
+                                        onClick={() => handleNavigate()}
+                                        key={student.id}
+                                    >
                                         <TableCell>
                                             <Checkbox
                                                 checked={selectedStudents.includes(student.id)}
