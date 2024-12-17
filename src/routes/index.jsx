@@ -11,6 +11,7 @@ import TransactionPage from '../screen/Main/dashboard/transaction/TransactionPag
 import ProfilePage from '../screen/Main/dashboard/profile/ProfilePage';
 import CourseDetail from '../screen/Main/dashboard/course/CourseDetail';
 import StudentDetailsPage from '../screen/Main/dashboard/student/StudentDetailPage';
+import StudentVerificationPage from '../screen/Main/StudentPage/StudentVerificationPage';
 
 const Routes = () => {
 
@@ -22,6 +23,11 @@ const Routes = () => {
                 {
                     path: "/login",
                     element: <LoginPage />,
+                },
+                // student details
+                {
+                    path: "/student",
+                    element: <StudentVerificationPage />,
                 },
             ],
         },
@@ -66,7 +72,8 @@ const Routes = () => {
                         {
                             path: "*",
                             element: <h1>Page not found</h1>,
-                        }
+                        },
+                        // student details
                     ],
                 },
             ],
