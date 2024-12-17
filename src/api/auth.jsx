@@ -22,3 +22,9 @@ export const loginUser = async (data) => {
     const response = await makeApiRequest('POST', '/user/login-user', data);
     return response;
 };
+
+export const getUserChannel = async (data) => {
+    const response = await makeApiRequest('GET', '/rep/channel/user', data);
+    return response;
+};
+

@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../../api/auth";
+import { getUserChannel, loginUser } from "../../api/auth";
 import { sendToast } from "../../components/utilis";
 import { useDispatch } from "react-redux";
 import { updateUserAccessToken } from "../../redux/actions/authAction";
+import { updateChannel } from "../../redux/actions/midAction";
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -23,14 +24,21 @@ export default function LoginPage() {
         const { data, status } = await loginUser(body);
 
         if (data?.accessToken) {
-            sendToast('success', data?.message)
             dispatch(updateUserAccessToken(data?.accessToken))
-            navigate("admin/analytics");
+
+            const { data: newData, status } = await getUserChannel();
+
+            if (newData?.success === true) {
+                sendToast('success', data?.message)
+                navigate("admin/analytics");
+                dispatch(updateChannel(newData?.data))
+            } else {
+                sendToast('error', "Login failed")
+            }
+
         } else {
             sendToast('error', data?.message)
         }
-
-        // console.log('............', data)
     };
 
 
