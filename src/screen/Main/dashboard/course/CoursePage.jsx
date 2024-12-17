@@ -41,7 +41,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
-import { generateChannelLink, getChannelCourses } from '../../../../api/auth';
+import { createChannelCourse, generateChannelLink, getChannelCourses } from '../../../../api/auth';
 import { useSelector } from 'react-redux';
 import { sendToast } from '../../../../components/utilis';
 
@@ -88,18 +88,28 @@ export default function CoursePage() {
     };
 
     // Course management functions
-    const addCourse = () => {
-        const newCourseEntry = {
+    const addCourse = async () => {
+        const body = {
             id: String(courses.length + 1),
             ...newCourse,
-            paidUsers: 0,
-            totalRevenue: 0,
-            channelLink: channelName
+            channelId,
         };
-        setCourses([...courses, newCourseEntry]);
-        // Reset form
-        setNewCourse({ code: '', name: '', price: '' });
-        setChannelName('');
+
+        console.log({ body });
+
+        const { data, status } = await createChannelCourse(body)
+
+        if (data?.success === true) {
+            sendToast('success', data?.message)
+            getCourses();
+        } else {
+            sendToast('error', data?.message)
+        }
+
+        // setCourses([...courses, newCourseEntry]);
+        // // Reset form
+        // setNewCourse({ code: '', name: '', price: '' });
+        // setChannelName('');
     };
 
     const deleteCourse = (id) => {

@@ -28,6 +28,11 @@ export const getUserChannel = async (data) => {
     return response;
 };
 
+export const createChannelCourse = async (data) => {
+    const response = await makeApiRequest('POST', '/rep/manuals', data);
+    return response;
+};
+
 export const getChannelCourses = async (channelId) => {
     const response = await makeApiRequest('GET', `/rep/channel/${channelId}`,);
     return response;
