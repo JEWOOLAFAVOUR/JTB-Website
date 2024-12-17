@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Card,
     CardContent,
@@ -41,29 +41,34 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
+import { getChannelCourses } from '../../../../api/auth';
+import { useSelector } from 'react-redux';
+import { sendToast } from '../../../../components/utilis';
 
 export default function CoursePage() {
     const navigate = useNavigate();
+    const channel = useSelector(state => state?.mid?.channel);
+    const channelId = channel?._id
     // State management
     const [courses, setCourses] = useState([
-        {
-            id: '1',
-            code: 'CS101',
-            name: 'Introduction to Programming',
-            price: 99.99,
-            paidUsers: 250,
-            totalRevenue: 24750.50,
-            channelLink: 'https://studypadi.com.ng/channel/22223/'
-        },
-        {
-            id: '2',
-            code: 'WD200',
-            name: 'Web Development Masterclass',
-            price: 199.99,
-            paidUsers: 150,
-            totalRevenue: 29998.50,
-            channelLink: 'https://studypadi.com.ng/channel/44446/'
-        }
+        // {
+        //     id: '1',
+        //     code: 'CS101',
+        //     name: 'Introduction to Programming',
+        //     price: 99.99,
+        //     paidUsers: 250,
+        //     totalRevenue: 24750.50,
+        //     channelLink: 'https://studypadi.com.ng/channel/22223/'
+        // },
+        // {
+        //     id: '2',
+        //     code: 'WD200',
+        //     name: 'Web Development Masterclass',
+        //     price: 199.99,
+        //     paidUsers: 150,
+        //     totalRevenue: 29998.50,
+        //     channelLink: 'https://studypadi.com.ng/channel/44446/'
+        // }
     ]);
     const [selectedCourses, setSelectedCourses] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -118,7 +123,24 @@ export default function CoursePage() {
     const handleNavigate = async () => {
         console.log('bbbbbbbbbbbbbbbbbb')
         navigate('/admin/course/details')
-    }
+    };
+
+    const getCourses = async () => {
+        const { data, status } = await getChannelCourses(channelId);
+
+        if (data?.success === true) {
+            sendToast('success', data?.message)
+            setCourses(data?.data || [])
+        } else {
+            sendToast('error', data?.message)
+        }
+
+        console.log('.........', data)
+    };
+
+    useEffect(() => {
+        getCourses();
+    }, [])
 
     return (
         <div className="p-6 space-y-6">
@@ -216,7 +238,8 @@ export default function CoursePage() {
                                 <Users className="mr-1 h-4 w-4" /> {filteredCourses.reduce((sum, course) => sum + course.paidUsers, 0)} Paid Users
                             </Badge>
                             <Badge variant="secondary" className="flex items-center">
-                                <DollarSign className="mr-1 h-4 w-4" /> ₦{filteredCourses.reduce((sum, course) => sum + course.totalRevenue, 0).toFixed(2)} Total Revenue
+                                {/* <DollarSign className="mr-1 h-4 w-4" /> ₦{filteredCourses.reduce((sum, course) => sum + course.totalRevenue, 0).toFixed(2) } Total Revenue */}
+                                <DollarSign className="mr-1 h-4 w-4" /> ₦{0} Total Revenue
                             </Badge>
                         </div>
                         {selectedCourses.length > 0 && (
@@ -267,7 +290,8 @@ export default function CoursePage() {
                                     <TableCell>{course.name}</TableCell>
                                     <TableCell>₦{course.price}</TableCell>
                                     <TableCell>{course.paidUsers}</TableCell>
-                                    <TableCell>₦{course.totalRevenue.toFixed(2)}</TableCell>
+                                    {/* <TableCell>₦{course.totalRevenue.toFixed(2) || 0}</TableCell> */}
+                                    <TableCell>₦{0}</TableCell>
                                     <TableCell>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
