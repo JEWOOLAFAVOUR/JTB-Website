@@ -1,12 +1,23 @@
 import React from "react";
-import Login from "./screen/Auth/LoginPage";
 import Routes from "./routes";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { ToastContainer } from "./components/utilis";
+import { Provider } from 'react-redux'
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import reduxStore from './redux/store';
+
+export const reduxPersistStore = persistStore(reduxStore);
+
 
 export default function App() {
   return (
     <>
-      <Routes />
+      <Provider store={reduxStore}>
+        <PersistGate persistor={reduxPersistStore}>
+          <ToastContainer />
+          <Routes />
+        </PersistGate>
+      </Provider>
     </>
   );
 }

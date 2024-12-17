@@ -29,7 +29,7 @@ export default function AdminDashboardLayout() {
     };
 
     const handleLogout = () => {
-
+        navigate('/login')
     }
 
     return (
@@ -79,17 +79,17 @@ export default function AdminDashboardLayout() {
                                     <MenubarContent>
                                         <MenubarItem onClick={() => navigate("/admin/profile")}>
                                             Profile
-                                            <MenubarShortcut>⌘P</MenubarShortcut>
+                                            <MenubarShortcut>P</MenubarShortcut>
                                         </MenubarItem>
                                         <MenubarSeparator />
                                         <MenubarItem>
                                             Settings
-                                            <MenubarShortcut>⌘S</MenubarShortcut>
+                                            <MenubarShortcut>S</MenubarShortcut>
                                         </MenubarItem>
                                         <MenubarSeparator />
                                         <MenubarItem onClick={() => handleLogout()} >
                                             Logout
-                                            <MenubarShortcut>⌘Q</MenubarShortcut>
+                                            <MenubarShortcut>Q</MenubarShortcut>
                                         </MenubarItem>
                                     </MenubarContent>
                                 </MenubarMenu>

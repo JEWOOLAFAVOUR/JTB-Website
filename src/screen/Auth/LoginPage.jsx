@@ -1,14 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../../api/auth";
+import { sendToast } from "../../components/utilis";
+import { useDispatch } from "react-redux";
+import { updateUserAccessToken } from "../../redux/actions/authAction";
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [load, setLoad] = useState(false);
 
 
-    const handleLogin = () => {
-        navigate("admin/analytics");
+    const handleLogin = async () => {
+        const body = { email, password }
+        console.log({ body })
+
+        const { data, status } = await loginUser(body);
+
+        if (data?.accessToken) {
+            sendToast('success', data?.message)
+            dispatch(updateUserAccessToken(data?.accessToken))
+            navigate("admin/analytics");
+        } else {
+            sendToast('error', data?.message)
+        }
+
+        // console.log('............', data)
     };
 
 
@@ -30,6 +52,8 @@ export default function LoginPage() {
                             type="email"
                             placeholder="Enter your email"
                             className="w-full"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
 
@@ -43,6 +67,8 @@ export default function LoginPage() {
                             type="password"
                             placeholder="Enter your password"
                             className="w-full"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
                 </div>
