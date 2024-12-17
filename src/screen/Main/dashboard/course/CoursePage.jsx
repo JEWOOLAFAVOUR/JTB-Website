@@ -41,7 +41,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
-import { getChannelCourses } from '../../../../api/auth';
+import { generateChannelLink, getChannelCourses } from '../../../../api/auth';
 import { useSelector } from 'react-redux';
 import { sendToast } from '../../../../components/utilis';
 
@@ -49,6 +49,7 @@ export default function CoursePage() {
     const navigate = useNavigate();
     const channel = useSelector(state => state?.mid?.channel);
     const channelId = channel?._id
+    const [channelLink, setChannelLink] = useState("")
     // State management
     const [courses, setCourses] = useState([
         // {
@@ -83,7 +84,7 @@ export default function CoursePage() {
 
     const generateChannelName = () => {
         const randomNumber = Math.floor(10000 + Math.random() * 90000);
-        setChannelName(`https://studypadi.com.ng/channel/₦{randomNumber}/`);
+        setChannelName(channelLink)
     };
 
     // Course management functions
@@ -138,8 +139,22 @@ export default function CoursePage() {
         console.log('.........', data)
     };
 
+    const generateLink = async () => {
+        const { data, status } = await generateChannelLink(channelId);
+
+        if (data?.success === true) {
+            sendToast('success', data?.message)
+            setChannelLink(data?.data?.link || "")
+        } else {
+            sendToast('error', data?.message)
+        }
+
+        console.log('cccccccccccccccccccccccccc', data)
+    };
+
     useEffect(() => {
         getCourses();
+        generateLink();
     }, [])
 
     return (
@@ -162,7 +177,7 @@ export default function CoursePage() {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => navigator.clipboard.writeText(channelName)}
+                                onClick={() => navigator.clipboard.writeText(channelLink)}
                             >
                                 <Copy className="h-4 w-4" />
                             </Button>

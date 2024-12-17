@@ -33,3 +33,9 @@ export const getChannelCourses = async (channelId) => {
     return response;
 };
 
+
+export const generateChannelLink = async (channelId) => {
+    const response = await makeApiRequest('GET', `/rep/channel/generate-link/${channelId}`,);
+    return response;
+};
+
