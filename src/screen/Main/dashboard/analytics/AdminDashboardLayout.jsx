@@ -14,10 +14,13 @@ import {
     MenubarTrigger
 } from "@/components/ui/menubar";
 import { AlignJustify } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function AdminDashboardLayout() {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false); // State for toggling sidebar
+    const userChannel = useSelector(state => state?.mid?.channel)
+
     const user = {
         name: "John Doe",
         avatarUrl: "https://img.freepik.com/free-vector/young-man-with-glasses-illustration_1308-174706.jpg?t=st=1734190535~exp=1734194135~hmac=8102a282ee9bc59d5132b2ddbb37883426e34fdef39fee1b69bfa6b554761234&w=740"
@@ -55,7 +58,7 @@ export default function AdminDashboardLayout() {
 
                             {/* Channel Name and ID */}
                             <div className="hidden sm:flex items-center space-x-2">
-                                <span className="text-xl font-semibold">{channel.name}</span>
+                                <span className="text-xl font-semibold">{userChannel?.name}</span>
                                 <span className="text-sm text-muted-foreground">{channel.id}</span>
                             </div>
                         </div>
@@ -63,7 +66,7 @@ export default function AdminDashboardLayout() {
                         {/* User Info */}
                         <div className="flex items-center space-x-4">
                             <span className="hidden sm:block text-lg font-medium text-muted-foreground">
-                                {user.name}
+                                {`${userChannel?.rep?.firstname} ${userChannel?.rep?.lastname}`}
                             </span>
                             <Avatar>
                                 <AvatarImage src={user.avatarUrl} alt={user.name} />

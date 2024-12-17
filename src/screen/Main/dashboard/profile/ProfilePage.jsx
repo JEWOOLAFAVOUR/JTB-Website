@@ -6,8 +6,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Avatar } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useSelector } from 'react-redux';
 
 export default function ProfilePage() {
+    const user = useSelector(state => state?.mid?.channel)
     // State for profile details
     const [profile, setProfile] = useState({
         firstName: "John",
@@ -44,7 +46,7 @@ export default function ProfilePage() {
                     <div className="flex items-center space-x-4">
                         <Avatar className="h-16 w-16" alt="Profile Avatar" />
                         <div>
-                            <CardTitle className="text-2xl">{profile.firstName} {profile.lastName}</CardTitle>
+                            <CardTitle className="text-2xl">{user?.rep?.firstname} {user?.rep.lastname}</CardTitle>
                             <p className="text-sm text-muted-foreground">@{profile.channelName}</p>
                         </div>
                     </div>
@@ -103,8 +105,8 @@ export default function ProfilePage() {
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-lg font-semibold">Personal Information</h3>
-                            <p><strong>First Name:</strong> {profile.firstName}</p>
-                            <p><strong>Last Name:</strong> {profile.lastName}</p>
+                            <p><strong>First Name:</strong> {user?.rep.firstname}</p>
+                            <p><strong>Last Name:</strong> {user?.rep.lastname}</p>
                         </div>
                         <div>
                             <h3 className="text-lg font-semibold">Channel Information</h3>
