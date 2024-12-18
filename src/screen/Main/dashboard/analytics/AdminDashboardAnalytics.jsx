@@ -19,6 +19,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { fetchDashboard } from '../../../../api/auth';
+import { sendToast } from '../../../../components/utilis';
+
 // Sample data (you'll replace with actual backend data)
 const courseData = [
     { name: 'Jan', transactions: 12, students: 350, revenue: 15000 },
@@ -36,7 +38,6 @@ export default function AdminDashboardAnalytics() {
 
     const [dashboard, setDashboard] = useState({});
 
-
     const fetchDashboardData = async () => {
         const { data, status } = await fetchDashboard();
 
@@ -44,6 +45,8 @@ export default function AdminDashboardAnalytics() {
 
         if (data?.success === true) {
             setDashboard(data?.data);
+        } else {
+            sendToast("error", data?.message)
         }
     };
 

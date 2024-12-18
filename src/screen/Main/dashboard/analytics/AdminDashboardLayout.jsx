@@ -14,12 +14,14 @@ import {
     MenubarTrigger
 } from "@/components/ui/menubar";
 import { AlignJustify } from "lucide-react";
-import { useSelector } from "react-redux";
+import useAuthStore from "../../../../zustand/useAuthStore";
 
 export default function AdminDashboardLayout() {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false); // State for toggling sidebar
-    const userChannel = useSelector(state => state?.mid?.channel)
+    const userChannel = ""
+    const { user: profile } = useAuthStore.getState();
+
 
     const user = {
         name: "John Doe",
@@ -59,14 +61,14 @@ export default function AdminDashboardLayout() {
                             {/* Channel Name and ID */}
                             <div className="hidden sm:flex items-center space-x-2">
                                 <span className="text-xl font-semibold">{userChannel?.name}</span>
-                                <span className="text-sm text-muted-foreground">{channel.id}</span>
+                                <span className="text-sm text-muted-foreground">Ladoke </span>
                             </div>
                         </div>
 
                         {/* User Info */}
                         <div className="flex items-center space-x-4">
                             <span className="hidden sm:block text-lg font-medium text-muted-foreground">
-                                {`${userChannel?.rep?.firstname} ${userChannel?.rep?.lastname}`}
+                                {`${profile?.firstname} ${profile?.lastname}`}
                             </span>
                             <Avatar>
                                 <AvatarImage src={user.avatarUrl} alt={user.name} />

@@ -23,6 +23,12 @@ export const loginUser = async (data) => {
     return response;
 };
 
+
+export const getProfile = async (data) => {
+    const response = await makeApiRequest('GET', '/user/find', data);
+    return response;
+};
+
 // ALL USERS 
 export const getAllUser = async (data) => {
     const response = await makeApiRequest('GET', '/user/get-all-user', data);

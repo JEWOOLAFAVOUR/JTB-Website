@@ -42,15 +42,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
 import { createChannelCourse, generateChannelLink, getChannelCourses } from '../../../../api/auth';
-import { useSelector } from 'react-redux';
 import { sendToast } from '../../../../components/utilis';
 import { fetchAllCourses } from '../../../../api/quiz';
 
 export default function CoursePage() {
     const navigate = useNavigate();
-    const channel = useSelector(state => state?.mid?.channel);
-    const channelId = channel?._id
-    const [channelLink, setChannelLink] = useState("")
+
     // State management
     const [courses, setCourses] = useState([]);
     const [selectedCourses, setSelectedCourses] = useState([]);
@@ -75,7 +72,6 @@ export default function CoursePage() {
         const body = {
             id: String(courses.length + 1),
             ...newCourse,
-            channelId,
         };
 
         console.log({ body });

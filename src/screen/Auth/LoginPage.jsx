@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { getUserChannel, loginUser } from "../../api/auth";
+import { getProfile, getUserChannel, loginUser } from "../../api/auth";
 import { sendToast } from "../../components/utilis";
 import { useDispatch } from "react-redux";
 import { updateUserAccessToken } from "../../redux/actions/authAction";
 import { updateChannel } from "../../redux/actions/midAction";
+import useAuthStore from "../../zustand/useAuthStore";
 
 export default function LoginPage() {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -23,21 +24,30 @@ export default function LoginPage() {
 
         const { data, status } = await loginUser(body);
 
+        console.log('.. resposne from login', data)
+
         if (data?.accessToken) {
-            dispatch(updateUserAccessToken(data?.accessToken))
+            // dispatch(updateUserAccessToken(data?.accessToken))
 
-            const { data: newData, status } = await getUserChannel();
+            const { setToken, setUser } = useAuthStore.getState();
 
-            if (newData?.success === true) {
+            setToken(data?.accessToken);
+            const { data: newData, status } = await getProfile();
+
+            console.log('profiless', newData)
+
+            if (newData?.profile) {
+                console.log('bbbbbbbbb')
                 sendToast('success', data?.message)
+                setUser(newData?.profile);
+
                 navigate("admin/analytics");
-                dispatch(updateChannel(newData?.data))
             } else {
-                sendToast('error', "Login failed")
+                sendToast('error', data?.message)
             }
 
         } else {
-            sendToast('error', data?.message)
+            sendToast('error', data?.message || data?.error)
         }
     };
 

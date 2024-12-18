@@ -1,23 +1,20 @@
 import axios from "axios";
 import constants from '../redux/constants';
+import useAuthStore from "../zustand/useAuthStore";
+
 const { BASE_URL } = constants;
-import reduxStore from "../redux/store";
 
-
-// const BASE_URL = 'https://lauhub.onrender.com/api/v1';
-// const BASE_URL = 'http://192.168.25.67:7000/api/v1/';
-
-
-const client = axios.create({ baseURL: BASE_URL })
-
+const client = axios.create({ baseURL: BASE_URL });
 
 // Add a request interceptor to add the authentication token to every request
 client.interceptors.request.use(
     function (config) {
-        // Get the authentication token from your Redux store
-        const token = reduxStore.getState().auth.token;
+        // Access Zustand's state using getState()
+        const { token } = useAuthStore.getState();
 
-        // Add the token to the request headers
+        // console.log('..........', token)
+
+        // Add the token to the request headers if available
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -25,6 +22,7 @@ client.interceptors.request.use(
         return config;
     },
     function (error) {
+        // Handle request errors
         return Promise.reject(error);
     }
 );
