@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     BarChart,
@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-
+import { fetchDashboard } from '../../../../api/auth';
 // Sample data (you'll replace with actual backend data)
 const courseData = [
     { name: 'Jan', transactions: 12, students: 350, revenue: 15000 },
@@ -34,6 +34,23 @@ export default function AdminDashboardAnalytics() {
     const totalStudents = 87;
     const totalRevenue = courseData.reduce((sum, item) => sum + item.revenue, 0);
 
+    const [dashboard, setDashboard] = useState({});
+
+
+    const fetchDashboardData = async () => {
+        const { data, status } = await fetchDashboard();
+
+        console.log('response from dashboard', data)
+
+        if (data?.success === true) {
+            setDashboard(data?.data);
+        }
+    };
+
+    useEffect(() => {
+        fetchDashboardData();
+    }, [])
+
     return (
         <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -44,7 +61,18 @@ export default function AdminDashboardAnalytics() {
                         <BookOpen className="h-5 w-5 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-semibold text-gray-900">{totalCourses}</div>
+                        <div className="text-3xl font-semibold text-gray-900">{dashboard?.courses || 0}</div>
+                        <p className="text-xs text-muted-foreground">+20% from last month</p>
+                    </CardContent>
+                </Card>
+
+                <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-gray-700">Total Past-Questions</CardTitle>
+                        <BookOpen className="h-5 w-5 text-primary" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-3xl font-semibold text-gray-900">{dashboard?.pastQuestions || 0}</div>
                         <p className="text-xs text-muted-foreground">+20% from last month</p>
                     </CardContent>
                 </Card>
@@ -55,30 +83,19 @@ export default function AdminDashboardAnalytics() {
                         <Users className="h-5 w-5 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-semibold text-gray-900">{totalStudents}</div>
+                        <div className="text-3xl font-semibold text-gray-900">{dashboard?.users || 0}</div>
                         <p className="text-xs text-muted-foreground">+15% from last month</p>
                     </CardContent>
                 </Card>
 
                 <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-gray-700">Total Revenue</CardTitle>
+                        <CardTitle className="text-sm font-medium text-gray-700">App Opening</CardTitle>
                         <DollarSign className="h-5 w-5 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-semibold text-gray-900">₦{totalRevenue.toLocaleString()}</div>
-                        <p className="text-xs text-muted-foreground">+25% from last month</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-gray-700">Growth Rate</CardTitle>
-                        <TrendingUp className="h-5 w-5 text-primary" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-semibold text-gray-900">22%</div>
-                        <p className="text-xs text-muted-foreground">Overall platform growth</p>
+                        <div className="text-3xl font-semibold text-gray-900">{dashboard?.totalOpen}</div>
+                        <p className="text-xs text-muted-foreground">today's analytics</p>
                     </CardContent>
                 </Card>
             </div>

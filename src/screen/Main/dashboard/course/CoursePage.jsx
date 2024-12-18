@@ -44,6 +44,7 @@ import { useNavigate } from 'react-router-dom';
 import { createChannelCourse, generateChannelLink, getChannelCourses } from '../../../../api/auth';
 import { useSelector } from 'react-redux';
 import { sendToast } from '../../../../components/utilis';
+import { fetchAllCourses } from '../../../../api/quiz';
 
 export default function CoursePage() {
     const navigate = useNavigate();
@@ -51,32 +52,14 @@ export default function CoursePage() {
     const channelId = channel?._id
     const [channelLink, setChannelLink] = useState("")
     // State management
-    const [courses, setCourses] = useState([
-        // {
-        //     id: '1',
-        //     code: 'CS101',
-        //     name: 'Introduction to Programming',
-        //     price: 99.99,
-        //     paidUsers: 250,
-        //     totalRevenue: 24750.50,
-        //     channelLink: 'https://studypadi.com.ng/channel/22223/'
-        // },
-        // {
-        //     id: '2',
-        //     code: 'WD200',
-        //     name: 'Web Development Masterclass',
-        //     price: 199.99,
-        //     paidUsers: 150,
-        //     totalRevenue: 29998.50,
-        //     channelLink: 'https://studypadi.com.ng/channel/44446/'
-        // }
-    ]);
+    const [courses, setCourses] = useState([]);
     const [selectedCourses, setSelectedCourses] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [newCourse, setNewCourse] = useState({
         code: '',
         name: '',
-        price: ''
+        level: "",
+
     });
 
     // Generate channel name
@@ -101,7 +84,6 @@ export default function CoursePage() {
 
         if (data?.success === true) {
             sendToast('success', data?.message)
-            getCourses();
         } else {
             sendToast('error', data?.message)
         }
@@ -136,35 +118,21 @@ export default function CoursePage() {
         navigate('/admin/course/details')
     };
 
-    const getCourses = async () => {
-        const { data, status } = await getChannelCourses(channelId);
+    const fetchCourses = async () => {
+        const { data, status } = await fetchAllCourses()
 
         if (data?.success === true) {
-            sendToast('success', data?.message)
-            setCourses(data?.data || [])
+            setCourses(data?.data)
         } else {
             sendToast('error', data?.message)
         }
 
-        console.log('.........', data)
-    };
+        console.log('response feom courses', data)
+    }
 
-    const generateLink = async () => {
-        const { data, status } = await generateChannelLink(channelId);
-
-        if (data?.success === true) {
-            sendToast('success', data?.message)
-            setChannelLink(data?.data?.link || "")
-        } else {
-            sendToast('error', data?.message)
-        }
-
-        console.log('cccccccccccccccccccccccccc', data)
-    };
 
     useEffect(() => {
-        getCourses();
-        generateLink();
+        fetchCourses();
     }, [])
 
     return (
@@ -172,27 +140,6 @@ export default function CoursePage() {
             <Card>
                 <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <CardTitle className="text-xl sm:text-2xl">Course Management</CardTitle>
-                    {/* Generate Channel Name */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mt-4 sm:mt-0">
-                        <Input
-                            value={channelName}
-                            readOnly
-                            placeholder="Generate Channel Name"
-                            className="w-full sm:w-[300px]"
-                        />
-                        <Button variant="outline" onClick={generateChannelName}>
-                            Generate
-                        </Button>
-                        {channelName && (
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => navigator.clipboard.writeText(channelLink)}
-                            >
-                                <Copy className="h-4 w-4" />
-                            </Button>
-                        )}
-                    </div>
 
                     {/* Add Course Dialog */}
                     <Dialog>
@@ -292,9 +239,9 @@ export default function CoursePage() {
                                 </TableHead>
                                 <TableHead>Course Code</TableHead>
                                 <TableHead>Course Name</TableHead>
-                                <TableHead>Price</TableHead>
-                                <TableHead>Paid Users</TableHead>
-                                <TableHead>Total Revenue</TableHead>
+                                <TableHead>Level</TableHead>
+                                <TableHead>Questions</TableHead>
+                                <TableHead>Lessons</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -311,12 +258,11 @@ export default function CoursePage() {
                                             onCheckedChange={() => toggleCourseSelection(course.id)}
                                         />
                                     </TableCell>
-                                    <TableCell>{course.code}</TableCell>
-                                    <TableCell>{course.name}</TableCell>
-                                    <TableCell>₦{course.price}</TableCell>
-                                    <TableCell>{course.paidUsers}</TableCell>
-                                    {/* <TableCell>₦{course.totalRevenue.toFixed(2) || 0}</TableCell> */}
-                                    <TableCell>₦{0}</TableCell>
+                                    <TableCell>{course?.code}</TableCell>
+                                    <TableCell>{course?.name}</TableCell>
+                                    <TableCell>₦{course?.level[0]}</TableCell>
+                                    <TableCell>20</TableCell>
+                                    <TableCell>{course?.lessons.length || 0}</TableCell>
                                     <TableCell>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>

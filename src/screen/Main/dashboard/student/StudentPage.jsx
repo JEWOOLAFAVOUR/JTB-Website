@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     Card,
     CardContent,
@@ -38,10 +38,13 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from 'react-router-dom';
+import { getAllUser } from '../../../../api/auth';
+import { sendToast } from '../../../../components/utilis';
 
 export default function StudentPage() {
     // Sample student data
     const navigate = useNavigate();
+    const [users, setUsers] = useState([]);
     const [students, setStudents] = useState([
         {
             id: '1',
@@ -124,7 +127,24 @@ export default function StudentPage() {
     const handleNavigate = async () => {
         console.log('bbbbbbbbbbbbbbbbbb')
         navigate('/admin/student/details')
-    }
+    };
+
+    const fetchUsers = async () => {
+        const { data, status } = await getAllUser();
+
+        console.log('response from users', data);
+
+        if (data?.success === true) {
+            sendToast('success', data?.message)
+            setUsers(data?.data)
+        } else {
+            sendToast('error', data?.message);
+        };
+    };
+
+    useEffect(() => {
+        fetchUsers();
+    }, [])
 
     return (
         <div className="p-6 space-y-6">
@@ -206,17 +226,15 @@ export default function StudentPage() {
                                     </TableHead>
                                     <TableHead>First Name</TableHead>
                                     <TableHead>Last Name</TableHead>
-                                    <TableHead>Matric Number</TableHead>
                                     <TableHead>Email</TableHead>
-                                    <TableHead>Amount Spent</TableHead>
-                                    <TableHead>Courses</TableHead>
-                                    <TableHead>Date Joined</TableHead>
+                                    <TableHead>Score</TableHead>
+                                    <TableHead>Date-Joined</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {currentStudents.map((student) => (
+                                {users.map((student) => (
                                     <TableRow
                                         className='cursor-pointer'
                                         onClick={() => handleNavigate()}
@@ -228,15 +246,13 @@ export default function StudentPage() {
                                                 onCheckedChange={() => toggleStudentSelection(student.id)}
                                             />
                                         </TableCell>
-                                        <TableCell>{student.firstName}</TableCell>
-                                        <TableCell>{student.lastName}</TableCell>
-                                        <TableCell>{student.matricNumber}</TableCell>
-                                        <TableCell>{student.email}</TableCell>
-                                        <TableCell>₦{student.amountSpent.toFixed(2)}</TableCell>
-                                        <TableCell>{student.courseCount}</TableCell>
-                                        <TableCell>{student.dateJoined}</TableCell>
+                                        <TableCell>{student?.firstname}</TableCell>
+                                        <TableCell>{student?.lastname}</TableCell>
+                                        <TableCell>{student?.email}</TableCell>
+                                        <TableCell>{student?.score || 0}</TableCell>
+                                        <TableCell>{student?.createdAt}</TableCell>
                                         <TableCell>
-                                            <Badge variant="outline">{student.status}</Badge>
+                                            <Badge variant="outline">{student?.status || "active"}</Badge>
                                         </TableCell>
                                         <TableCell>
                                             <DropdownMenu>

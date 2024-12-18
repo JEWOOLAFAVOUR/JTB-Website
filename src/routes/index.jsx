@@ -12,6 +12,7 @@ import ProfilePage from '../screen/Main/dashboard/profile/ProfilePage';
 import CourseDetail from '../screen/Main/dashboard/course/CourseDetail';
 import StudentDetailsPage from '../screen/Main/dashboard/student/StudentDetailPage';
 import StudentVerificationPage from '../screen/Main/StudentPage/StudentVerificationPage';
+import PastQuestionPage from '../screen/Main/dashboard/past-question/PastQuestionPage';
 
 const Routes = () => {
 
@@ -48,6 +49,10 @@ const Routes = () => {
                         {
                             path: "course",
                             element: <CoursePage />,
+                        },
+                        {
+                            path: "past-question",
+                            element: <PastQuestionPage />,
                         },
                         {
                             path: "student",

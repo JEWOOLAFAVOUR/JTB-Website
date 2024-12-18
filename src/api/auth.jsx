@@ -23,6 +23,41 @@ export const loginUser = async (data) => {
     return response;
 };
 
+// ALL USERS 
+export const getAllUser = async (data) => {
+    const response = await makeApiRequest('GET', '/user/get-all-user', data);
+    return response;
+};
+
+
+
+export const appOpens = async () => {
+    const response = await makeApiRequest('GET', '/user/analytics/app-opens',);
+    return response;
+};
+
+// ANNOUNCEMENT    
+
+export const createAnnouncement = async () => {
+    const response = await makeApiRequest('POST', 'user/announcement/create',);
+    return response;
+};
+
+export const getAllAnnouncement = async () => {
+    const response = await makeApiRequest('GET', '/user/announcement/get-all',);
+    return response;
+};
+
+export const changeAnnouncementStatus = async () => {
+    const response = await makeApiRequest('PUT', `/user/announcement/change-status/${announcementId}`,);
+    return response;
+};
+
+export const fetchDashboard = async () => {
+    const response = await makeApiRequest('GET', '/user/analytics/dashboard',);
+    return response;
+};
+
 export const getUserChannel = async (data) => {
     const response = await makeApiRequest('GET', '/rep/channel/user', data);
     return response;
