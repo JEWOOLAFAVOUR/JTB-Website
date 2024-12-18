@@ -27,7 +27,6 @@ export default function AdminDashboardLayout() {
         name: "John Doe",
         avatarUrl: "https://img.freepik.com/free-vector/young-man-with-glasses-illustration_1308-174706.jpg?t=st=1734190535~exp=1734194135~hmac=8102a282ee9bc59d5132b2ddbb37883426e34fdef39fee1b69bfa6b554761234&w=740"
     }; // Example user
-    const channel = { name: "Computer Science Channel", id: "#34445555" }; // Example channel
 
     const toggleSidebar = () => {
         setIsOpen(!isOpen);
