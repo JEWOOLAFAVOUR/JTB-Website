@@ -13,26 +13,38 @@ import CourseDetail from '../screen/Main/dashboard/course/CourseDetail';
 import StudentDetailsPage from '../screen/Main/dashboard/student/StudentDetailPage';
 import StudentVerificationPage from '../screen/Main/StudentPage/StudentVerificationPage';
 import PastQuestionPage from '../screen/Main/dashboard/past-question/PastQuestionPage';
+import UniversitySelectionPage from '../screen/Auth/UniversitySelectionPage';
 
 const Routes = () => {
 
+    // const pageRoutes = [
+    //     {
+    //         path: "",
+    //         element: <LoginPage />,
+    //         children: [
+    //             {
+    //                 path: "/login",
+    //                 element: <LoginPage />,
+    //             },
+    //             {
+    //                 path: "/university",
+    //                 element: <UniversitySelectionPage />,
+    //             },
+    //         ],
+    //     },
+    // ];
+
     const pageRoutes = [
         {
-            path: "",
+            path: "/login",
             element: <LoginPage />,
-            children: [
-                {
-                    path: "/login",
-                    element: <LoginPage />,
-                },
-                // student details
-                {
-                    path: "/student",
-                    element: <StudentVerificationPage />,
-                },
-            ],
+        },
+        {
+            path: "/university",
+            element: <UniversitySelectionPage />,
         },
     ];
+
 
     const adminRoutes = [
         {

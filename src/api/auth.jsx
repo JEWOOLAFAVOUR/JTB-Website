@@ -29,6 +29,17 @@ export const getProfile = async (data) => {
     return response;
 };
 
+
+export const fetchUniversity = async () => {
+    const response = await makeApiRequest('GET', '/user/university',);
+    return response;
+};
+
+export const editProfile = async (data) => {
+    const response = await makeApiRequest('PUT', '/user/edit-profile', data);
+    return response;
+};
+
 // ALL USERS 
 export const getAllUser = async (data) => {
     const response = await makeApiRequest('GET', '/user/get-all-user', data);

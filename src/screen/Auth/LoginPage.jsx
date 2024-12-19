@@ -32,19 +32,8 @@ export default function LoginPage() {
             const { setToken, setUser } = useAuthStore.getState();
 
             setToken(data?.accessToken);
-            const { data: newData, status } = await getProfile();
+            navigate("/university")
 
-            console.log('profiless', newData)
-
-            if (newData?.profile) {
-                console.log('bbbbbbbbb')
-                sendToast('success', data?.message)
-                setUser(newData?.profile);
-
-                navigate("admin/analytics");
-            } else {
-                sendToast('error', data?.message)
-            }
 
         } else {
             sendToast('error', data?.message || data?.error)
