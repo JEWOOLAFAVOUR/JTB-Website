@@ -24,16 +24,11 @@ export default function LoginPage() {
 
         const { data, status } = await loginUser(body);
 
-        console.log('.. resposne from login', data)
-
         if (data?.accessToken) {
-            // dispatch(updateUserAccessToken(data?.accessToken))
-
             const { setToken, setUser } = useAuthStore.getState();
 
             setToken(data?.accessToken);
             navigate("/university")
-
 
         } else {
             sendToast('error', data?.message || data?.error)

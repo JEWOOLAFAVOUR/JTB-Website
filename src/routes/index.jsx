@@ -17,24 +17,12 @@ import UniversitySelectionPage from '../screen/Auth/UniversitySelectionPage';
 
 const Routes = () => {
 
-    // const pageRoutes = [
-    //     {
-    //         path: "",
-    //         element: <LoginPage />,
-    //         children: [
-    //             {
-    //                 path: "/login",
-    //                 element: <LoginPage />,
-    //             },
-    //             {
-    //                 path: "/university",
-    //                 element: <UniversitySelectionPage />,
-    //             },
-    //         ],
-    //     },
-    // ];
 
     const pageRoutes = [
+        {
+            path: "",
+            element: <LoginPage />,
+        },
         {
             path: "/login",
             element: <LoginPage />,

@@ -33,6 +33,9 @@ export default function AdminDashboardLayout() {
     };
 
     const handleLogout = () => {
+
+        const { clearAuth } = useAuthStore.getState();
+        clearAuth();
         navigate('/login')
     }
 

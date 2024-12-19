@@ -44,6 +44,7 @@ export default function AdminDashboardAnalytics() {
         console.log('response from dashboard', data)
 
         if (data?.success === true) {
+            sendToast('success', "Welcome")
             setDashboard(data?.data);
         } else {
             sendToast("error", data?.message)
