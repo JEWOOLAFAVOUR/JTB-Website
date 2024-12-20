@@ -47,6 +47,7 @@ export default function PastQuestionPage() {
     const [pastQuestions, setPastQuestions] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     // Form states
     const [formData, setFormData] = useState({
@@ -79,29 +80,44 @@ export default function PastQuestionPage() {
         }));
     };
 
+    const resetForm = () => {
+        setFormData({
+            code: '',
+            name: '',
+            year: '',
+            semester: '',
+            images: []
+        });
+    };
+
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
+            // Create FormData exactly as expected by the API
             const formDataToSend = new FormData();
-            Object.keys(formData).forEach(key => {
-                if (key === 'images') {
-                    formData.images.forEach(image => {
-                        formDataToSend.append('images', image);
-                    });
-                } else {
-                    formDataToSend.append(key, formData[key]);
-                }
-            });
-            formDataToSend.append('university', "66756404fbeb81c90d5ad6a3");
+            formDataToSend.append("code", formData.code);
+            formDataToSend.append("name", formData.name);
+            formDataToSend.append("year", formData.year);
+            formDataToSend.append("university", "66756404fbeb81c90d5ad6a3");
+            formDataToSend.append("semester", formData.semester);
 
-            const { data } = await createPastQuestion(formDataToSend);
-            if (data?.success) {
-                sendToast('success', data.message);
+            // Append images with indexed keys as expected by the API
+            formData.images.forEach((image, index) => {
+                formDataToSend.append(`image${index}`, image);
+            });
+
+            const response = await createPastQuestion(formDataToSend);
+
+            if (response?.data?.success) {
+                sendToast('success', response.data.message);
                 fetchPastQuestions();
+                setIsDialogOpen(false);
+                resetForm();
             } else {
-                sendToast('error', data.message);
+                sendToast('error', response.data?.message || 'Failed to create past question');
             }
         } catch (error) {
+            console.error('Error submitting form:', error);
             sendToast('error', 'Failed to create past question');
         } finally {
             setIsLoading(false);
@@ -112,7 +128,7 @@ export default function PastQuestionPage() {
         try {
             const { data } = await getAllPastQuestions();
             if (data?.success) {
-                setPastQuestions(data.pastQuestions);
+                setPastQuestions(data?.pastQuestions);
             }
         } catch (error) {
             sendToast('error', 'Failed to fetch past questions');
@@ -134,7 +150,7 @@ export default function PastQuestionPage() {
                 <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <CardTitle className="text-xl sm:text-2xl">Past Questions Management</CardTitle>
 
-                    <Dialog>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
                             <Button className="mt-4 sm:mt-0">
                                 <PlusCircle className="mr-2 h-4 w-4" /> Add Past Question
