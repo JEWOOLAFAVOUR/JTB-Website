@@ -135,6 +135,12 @@ export const getAllPastQuestions = async () => {
     return response;
 };
 
+
+export const getPastQuestionById = async (id) => {
+    const response = await makeApiRequest('GET', `/past-question/get-past-question/${id}`,);
+    return response;
+};
+
 export const deletePastQuestion = async (id) => {
     const response = await makeApiRequest('DELETE', `/past-question/${id}`,);
     return response;

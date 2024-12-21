@@ -3,7 +3,7 @@ import {
     Card,
     CardContent,
     CardHeader,
-    CardTitle
+    CardTitle,
 } from "@/components/ui/card";
 import {
     Table,
@@ -11,13 +11,13 @@ import {
     TableCell,
     TableHead,
     TableHeader,
-    TableRow
+    TableRow,
 } from "@/components/ui/table";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
-    DialogTitle
+    DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,73 +25,102 @@ import {
     User,
     Mail,
     Phone,
-    BookOpen,
-    DollarSign,
     Calendar,
     FileDown,
-    ReceiptText
+    Activity,
+    Clock,
+    Flame,
+    Trophy,
+    BarChart
 } from 'lucide-react';
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function StudentDetailsPage() {
-    // Student Details
     const [studentDetails] = useState({
         id: 'MTN2023001',
         firstName: 'John',
         lastName: 'Doe',
         email: 'john.doe@example.com',
         phone: '+234 123 456 7890',
-        dateOfBirth: '1998-05-15',
         dateJoined: '2023-01-15',
-        totalCoursesEnrolled: 5,
-        totalAmountSpent: 2999.50,
-        status: 'Active'
+        lastLogin: '2024-12-21 09:45 AM',
+        loginStreak: 15,
+        totalScore: 850,
+        weeklyLoginCount: 20,
+        totalLoginTime: '45h 30m'
     });
 
-    // Courses Enrolled
-    const [courses, setCourses] = useState([
+    const [isLoginHistoryModalOpen, setIsLoginHistoryModalOpen] = useState(false);
+
+    // Weekly login statistics
+    const [weeklyStats] = useState([
+        { week: 'Week 1', logins: 20, totalTime: '10h 15m' },
+        { week: 'Week 2', logins: 15, totalTime: '8h 45m' },
+        { week: 'Week 3', logins: 25, totalTime: '12h 30m' },
+        { week: 'Week 4', logins: 18, totalTime: '9h 20m' }
+    ]);
+
+    // Detailed login activities
+    const [loginActivities] = useState([
         {
-            id: '1',
-            name: 'Web Development Masterclass',
-            price: 599.99,
-            datePurchased: '2023-02-15',
-            certificateCollected: false
+            id: 1,
+            loginTime: '2024-12-21 09:45:23',
+            logoutTime: '2024-12-21 10:30:45',
+            duration: '45m 22s',
+            deviceType: 'Mobile',
+            ipAddress: '192.168.1.1'
         },
         {
-            id: '2',
-            name: 'Advanced Python Programming',
-            price: 449.50,
-            datePurchased: '2023-03-20',
-            certificateCollected: true
+            id: 2,
+            loginTime: '2024-12-21 14:20:10',
+            logoutTime: '2024-12-21 15:15:30',
+            duration: '55m 20s',
+            deviceType: 'Desktop',
+            ipAddress: '192.168.1.2'
+        },
+        {
+            id: 3,
+            loginTime: '2024-12-20 08:30:15',
+            logoutTime: '2024-12-20 09:45:20',
+            duration: '1h 15m 5s',
+            deviceType: 'Tablet',
+            ipAddress: '192.168.1.3'
         }
     ]);
 
-    // Transaction History
-    const [transactions, setTransactions] = useState([
+    const [activities] = useState([
         {
-            id: 'TXN001',
-            courseName: 'Web Development Masterclass',
-            amount: 599.99,
-            date: '2023-02-15',
-            status: 'Completed'
+            id: 1,
+            type: 'test',
+            course: 'CSC 202',
+            description: 'Mid-semester Test',
+            score: 20,
+            maxScore: 30,
+            date: '2024-12-20',
+            time: '14:30'
         },
         {
-            id: 'TXN002',
-            courseName: 'Advanced Python Programming',
-            amount: 449.50,
-            date: '2023-03-20',
-            status: 'Completed'
+            id: 2,
+            type: 'login',
+            description: 'System Login',
+            date: '2024-12-21',
+            time: '09:45'
+        },
+        {
+            id: 3,
+            type: 'quiz',
+            course: 'CSC 201',
+            description: 'Programming Quiz',
+            score: 95,
+            maxScore: 100,
+            date: '2024-12-18',
+            time: '11:20'
         }
     ]);
 
-    // Transaction History Modal State
-    const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
-
-    // PDF Download Function (Placeholder)
     const handleDownloadReport = () => {
-        // In a real application, you'd use a library like jspdf or call a backend service
-        alert('Generating student report PDF...');
+        alert('Generating activity report PDF...');
     };
 
     return (
@@ -118,61 +147,67 @@ export default function StudentDetailsPage() {
                                 <Calendar className="mr-2 h-5 w-5 text-muted-foreground" />
                                 <span>Joined: {studentDetails.dateJoined}</span>
                             </div>
+                            <div className="flex items-center">
+                                <Clock className="mr-2 h-5 w-5 text-muted-foreground" />
+                                <span>Last Login: {studentDetails.lastLogin}</span>
+                            </div>
+                            <div className="flex items-center">
+                                <Flame className="mr-2 h-5 w-5 text-orange-500" />
+                                <span>Login Streak: {studentDetails.loginStreak} days</span>
+                            </div>
                             <Separator />
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Courses Enrolled</p>
-                                    <p className="font-semibold">{studentDetails.totalCoursesEnrolled}</p>
+                                    <p className="text-sm text-muted-foreground">Total Score</p>
+                                    <p className="font-semibold">{studentDetails.totalScore}</p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-muted-foreground">Total Spent</p>
-                                    <p className="font-semibold">₦{studentDetails.totalAmountSpent.toFixed(2)}</p>
+                                    <p className="text-sm text-muted-foreground">Weekly Logins</p>
+                                    <p className="font-semibold">{studentDetails.weeklyLoginCount}</p>
                                 </div>
                             </div>
                             <Button
                                 onClick={handleDownloadReport}
                                 className="w-full"
                             >
-                                <FileDown className="mr-2 h-4 w-4" /> Download Student Report
+                                <FileDown className="mr-2 h-4 w-4" /> Download Activity Report
                             </Button>
                         </div>
                     </CardContent>
                 </Card>
 
-                {/* Courses Enrolled Card */}
+                {/* App Usage Card */}
                 <Card className="md:col-span-2">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="flex items-center">
-                            <BookOpen className="mr-2 h-6 w-6" /> Courses Enrolled
+                            <BarChart className="mr-2 h-6 w-6" /> App Usage Analytics
                         </CardTitle>
                         <Button
                             variant="outline"
-                            onClick={() => setIsTransactionModalOpen(true)}
+                            onClick={() => setIsLoginHistoryModalOpen(true)}
                         >
-                            <ReceiptText className="mr-2 h-4 w-4" /> View Transactions
+                            <Activity className="mr-2 h-4 w-4" /> View Login History
                         </Button>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Course Name</TableHead>
-                                    <TableHead>Price</TableHead>
-                                    <TableHead>Date Purchased</TableHead>
-                                    <TableHead>Certificate Status</TableHead>
+                                    <TableHead>Week</TableHead>
+                                    <TableHead>Login Count</TableHead>
+                                    <TableHead>Total Time</TableHead>
+                                    <TableHead>Status</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {courses.map((course) => (
-                                    <TableRow key={course.id}>
-                                        <TableCell>{course.name}</TableCell>
-                                        <TableCell>₦{course.price.toFixed(2)}</TableCell>
-                                        <TableCell>{course.datePurchased}</TableCell>
+                                {weeklyStats.map((week, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{week.week}</TableCell>
+                                        <TableCell>{week.logins} times</TableCell>
+                                        <TableCell>{week.totalTime}</TableCell>
                                         <TableCell>
-                                            <Badge
-                                                variant={course.certificateCollected ? "default" : "outline"}
-                                            >
-                                                {course.certificateCollected ? 'Collected' : 'Pending'}
+                                            <Badge variant={week.logins >= 20 ? "success" : "warning"}>
+                                                {week.logins >= 20 ? 'Active' : 'Moderate'}
                                             </Badge>
                                         </TableCell>
                                     </TableRow>
@@ -183,36 +218,85 @@ export default function StudentDetailsPage() {
                 </Card>
             </div>
 
-            {/* Transaction History Modal */}
+            {/* Recent Activity Card */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center">
+                        <Activity className="mr-2 h-6 w-6" /> Recent Activity
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Date & Time</TableHead>
+                                <TableHead>Activity</TableHead>
+                                <TableHead>Details</TableHead>
+                                <TableHead>Status</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {activities.map((activity) => (
+                                <TableRow key={activity.id}>
+                                    <TableCell>
+                                        {activity.date}<br />
+                                        <span className="text-sm text-muted-foreground">{activity.time}</span>
+                                    </TableCell>
+                                    <TableCell>{activity.description}</TableCell>
+                                    <TableCell>
+                                        {activity.score !== undefined ?
+                                            `Score: ${activity.score}/${activity.maxScore}` :
+                                            'System Access'
+                                        }
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant={
+                                            activity.type === 'login' ? "outline" :
+                                                (activity.score / activity.maxScore >= 0.7) ? "success" : "warning"
+                                        }>
+                                            {activity.type === 'login' ? 'Completed' :
+                                                (activity.score / activity.maxScore >= 0.7) ? 'Good' : 'Needs Improvement'}
+                                        </Badge>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+
+            {/* Login History Modal */}
             <Dialog
-                open={isTransactionModalOpen}
-                onOpenChange={setIsTransactionModalOpen}
+                open={isLoginHistoryModalOpen}
+                onOpenChange={setIsLoginHistoryModalOpen}
             >
-                <DialogContent className="sm:max-w-[600px]">
+                <DialogContent className="sm:max-w-[800px]">
                     <DialogHeader>
-                        <DialogTitle>Transaction History</DialogTitle>
+                        <DialogTitle>Login History</DialogTitle>
                     </DialogHeader>
                     <ScrollArea className="h-[400px] w-full pr-4">
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Transaction ID</TableHead>
-                                    <TableHead>Course</TableHead>
-                                    <TableHead>Amount</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Status</TableHead>
+                                    <TableHead>Login Time</TableHead>
+                                    <TableHead>Logout Time</TableHead>
+                                    <TableHead>Duration</TableHead>
+                                    <TableHead>Device</TableHead>
+                                    <TableHead>IP Address</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {transactions.map((transaction) => (
-                                    <TableRow key={transaction.id}>
-                                        <TableCell>{transaction.id}</TableCell>
-                                        <TableCell>{transaction.courseName}</TableCell>
-                                        <TableCell>₦{transaction.amount.toFixed(2)}</TableCell>
-                                        <TableCell>{transaction.date}</TableCell>
+                                {loginActivities.map((activity) => (
+                                    <TableRow key={activity.id}>
+                                        <TableCell>{activity.loginTime}</TableCell>
+                                        <TableCell>{activity.logoutTime}</TableCell>
+                                        <TableCell>{activity.duration}</TableCell>
                                         <TableCell>
-                                            <Badge variant="outline">{transaction.status}</Badge>
+                                            <Badge variant="outline">
+                                                {activity.deviceType}
+                                            </Badge>
                                         </TableCell>
+                                        <TableCell>{activity.ipAddress}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -222,4 +306,4 @@ export default function StudentDetailsPage() {
             </Dialog>
         </div>
     );
-}
+};

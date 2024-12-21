@@ -15,9 +15,14 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+    Dialog,
+    DialogContent,
+    DialogClose,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, Book, School } from 'lucide-react';
-import { getAllPastQuestions } from '../../../../api/quiz';
+import { ArrowLeft, Calendar, Book, School, X, Eye, FileText } from 'lucide-react';
+import { getPastQuestionById } from '../../../../api/quiz';
 import { sendToast } from '../../../../components/utilis';
 
 export default function PastQuestionDetailPage() {
@@ -25,19 +30,21 @@ export default function PastQuestionDetailPage() {
     const navigate = useNavigate();
     const [pastQuestion, setPastQuestion] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [stats] = useState({
+        views: 245, // This would come from your API
+        hasExplanation: false // This would come from your API
+    });
 
     useEffect(() => {
         const fetchPastQuestion = async () => {
             try {
-                const { data } = await getAllPastQuestions();
+                const { data } = await getPastQuestionById(id);
                 if (data?.success) {
-                    const question = data.pastQuestions.find(q => q._id === id);
-                    if (question) {
-                        setPastQuestion(question);
-                    } else {
-                        sendToast('error', 'Past question not found');
-                        navigate('/past-question');
-                    }
+                    setPastQuestion(data.pastQuestions);
+                } else {
+                    sendToast('error', 'Past question not found');
+                    navigate('/admin/past-question');
                 }
             } catch (error) {
                 sendToast('error', 'Failed to fetch past question details');
@@ -72,6 +79,38 @@ export default function PastQuestionDetailPage() {
                 Back to Past Questions
             </Button>
 
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <Card>
+                    <CardContent className="flex items-center p-6">
+                        <div className="rounded-full p-3 bg-blue-100 mr-4">
+                            <Eye className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm text-muted-foreground">Total Views</p>
+                            <p className="text-2xl font-semibold">{stats.views}</p>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent className="flex items-center p-6">
+                        <div className="rounded-full p-3 bg-green-100 mr-4">
+                            <FileText className="h-6 w-6 text-green-600" />
+                        </div>
+                        <div>
+                            <p className="text-sm text-muted-foreground">Explanation Status</p>
+                            <p className="text-2xl font-semibold">
+                                {stats.hasExplanation ? (
+                                    <span className="text-green-600">Available</span>
+                                ) : (
+                                    <span className="text-red-600">Not Available</span>
+                                )}
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
             <Card>
                 <CardHeader>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -90,10 +129,6 @@ export default function PastQuestionDetailPage() {
                                 <Book className="mr-1 h-4 w-4" />
                                 Semester: {pastQuestion.semester}
                             </Badge>
-                            <Badge variant="outline" className="flex items-center">
-                                <School className="mr-1 h-4 w-4" />
-                                University ID: {pastQuestion.university}
-                            </Badge>
                         </div>
                     </div>
                 </CardHeader>
@@ -103,25 +138,46 @@ export default function PastQuestionDetailPage() {
                         <div>
                             <h3 className="text-lg font-semibold mb-4">Past Question Images</h3>
                             {pastQuestion.images && pastQuestion.images.length > 0 ? (
-                                <Carousel className="w-full max-w-3xl mx-auto">
-                                    <CarouselContent>
-                                        {pastQuestion.images.map((image, index) => (
-                                            <CarouselItem key={image._id || index}>
-                                                <div className="p-1">
-                                                    <div className="flex aspect-square items-center justify-center p-6">
-                                                        <img
-                                                            src={image.url}
-                                                            alt={`Past Question ${index + 1}`}
-                                                            className="max-w-full max-h-full object-contain rounded-lg"
-                                                        />
+                                <>
+                                    <Carousel className="w-full max-w-3xl mx-auto">
+                                        <CarouselContent>
+                                            {pastQuestion.images.map((image, index) => (
+                                                <CarouselItem key={image._id || index}>
+                                                    <div className="p-1">
+                                                        <div
+                                                            className="flex aspect-square items-center justify-center p-6 cursor-pointer"
+                                                            onClick={() => setSelectedImage(image)}
+                                                        >
+                                                            <img
+                                                                src={image.url}
+                                                                alt={`Past Question ${index + 1}`}
+                                                                className="max-w-full max-h-full object-contain rounded-lg hover:opacity-90 transition-opacity"
+                                                            />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </CarouselItem>
-                                        ))}
-                                    </CarouselContent>
-                                    <CarouselPrevious />
-                                    <CarouselNext />
-                                </Carousel>
+                                                </CarouselItem>
+                                            ))}
+                                        </CarouselContent>
+                                        <CarouselPrevious />
+                                        <CarouselNext />
+                                    </Carousel>
+
+                                    <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+                                        <DialogContent className="max-w-full max-h-[90vh] w-[90vw] p-0">
+                                            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                                                <X className="h-4 w-4" />
+                                                <span className="sr-only">Close</span>
+                                            </DialogClose>
+                                            {selectedImage && (
+                                                <img
+                                                    src={selectedImage.url}
+                                                    alt="Enlarged view"
+                                                    className="w-full h-full object-contain"
+                                                />
+                                            )}
+                                        </DialogContent>
+                                    </Dialog>
+                                </>
                             ) : (
                                 <p className="text-center text-muted-foreground">No images available</p>
                             )}
