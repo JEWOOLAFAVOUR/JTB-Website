@@ -15,6 +15,7 @@ import StudentVerificationPage from '../screen/Main/StudentPage/StudentVerificat
 import PastQuestionPage from '../screen/Main/dashboard/past-question/PastQuestionPage';
 import UniversitySelectionPage from '../screen/Auth/UniversitySelectionPage';
 import PastQuestionDetailPage from '../screen/Main/dashboard/past-question/PastQuestionDetailPage';
+import LessonQuestionPage from '../screen/Main/dashboard/course/LessonQuestionPage';
 
 const Routes = () => {
 
@@ -70,6 +71,10 @@ const Routes = () => {
                         {
                             path: "course/details/:courseId",
                             element: <CourseDetail />,
+                        },
+                        {
+                            path: "course/lesson/:lessonId/questions",
+                            element: <LessonQuestionPage />,
                         },
                         {
                             path: "student/details",

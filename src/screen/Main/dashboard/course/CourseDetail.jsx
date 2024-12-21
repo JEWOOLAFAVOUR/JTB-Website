@@ -89,6 +89,11 @@ export default function CourseDetail() {
         }
     };
 
+    const handleNavigate = (lessonId) => {
+        navigate(`/admin/course/lesson/${lessonId}/questions`);
+    };
+
+
     return (
         <div className="p-6 space-y-6">
             <Button
@@ -156,7 +161,10 @@ export default function CourseDetail() {
                                 </TableHeader>
                                 <TableBody>
                                     {lessons.map((lesson) => (
-                                        <TableRow key={lesson._id}>
+                                        <TableRow
+                                            className='cursor-pointer'
+                                            onClick={() => handleNavigate(lesson._id)}
+                                            key={lesson._id}>
                                             <TableCell className="font-medium">{lesson.name}</TableCell>
                                             <TableCell>{lesson.description}</TableCell>
                                             <TableCell>
