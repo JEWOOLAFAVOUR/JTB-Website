@@ -33,7 +33,8 @@ import {
     FileText,
     CheckCircle2,
     HelpCircle,
-    X
+    X,
+    ArrowLeft
 } from 'lucide-react';
 // import useQuestionStore from './question-store';
 import useQuestionStore from '../../../../zustand/useQuestionStore';
@@ -139,6 +140,14 @@ export default function LessonQuestionPage() {
 
     return (
         <div className="p-6 space-y-6">
+            <Button
+                variant="ghost"
+                className="mb-6"
+                onClick={() => navigate(-1)}
+            >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Past Questions
+            </Button>
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/10">
