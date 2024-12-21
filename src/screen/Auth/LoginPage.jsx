@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { getProfile, getUserChannel, loginUser } from "../../api/auth";
-import { sendToast } from "../../components/utilis";
+import { Roller, sendToast } from "../../components/utilis";
 import { useDispatch } from "react-redux";
 import { updateUserAccessToken } from "../../redux/actions/authAction";
 import { updateChannel } from "../../redux/actions/midAction";
@@ -22,7 +22,9 @@ export default function LoginPage() {
         const body = { email, password }
         console.log({ body })
 
+        setLoad(true)
         const { data, status } = await loginUser(body);
+        setLoad(false)
 
         if (data?.accessToken) {
             const { setToken, setUser } = useAuthStore.getState();
@@ -38,6 +40,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            {load && <Roller visible={load} />}
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md md:max-w-lg">
                 <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
                     Login to Your Account

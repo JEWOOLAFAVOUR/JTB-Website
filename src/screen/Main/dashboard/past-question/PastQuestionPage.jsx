@@ -41,6 +41,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
 import { getAllPastQuestions, createPastQuestion } from '../../../../api/quiz';
 import { sendToast } from '../../../../components/utilis';
+import useAuthStore from '../../../../zustand/useAuthStore';
 
 export default function PastQuestionPage() {
     const navigate = useNavigate();
@@ -49,13 +50,18 @@ export default function PastQuestionPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+    const { user } = useAuthStore.getState();
+
+    let university = user?.university?._id
+
+
     // Form states
     const [formData, setFormData] = useState({
         code: '',
         name: '',
         year: '',
         semester: '',
-        images: []
+        images: [],
     });
 
     const handleInputChange = (field, value) => {
@@ -86,35 +92,30 @@ export default function PastQuestionPage() {
             name: '',
             year: '',
             semester: '',
-            images: []
+            images: [],
         });
     };
 
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
-            // Create FormData exactly as expected by the API
-            const formDataToSend = new FormData();
-            formDataToSend.append("code", formData.code);
-            formDataToSend.append("name", formData.name);
-            formDataToSend.append("year", formData.year);
-            formDataToSend.append("university", "66756404fbeb81c90d5ad6a3");
-            formDataToSend.append("semester", formData.semester);
+            console.log('ppppppppppppppppp', formData)
 
-            // Append images with indexed keys as expected by the API
-            formData.images.forEach((image, index) => {
-                formDataToSend.append(`image${index}`, image);
-            });
+            const body = { ...formData, university, }
 
-            const response = await createPastQuestion(formDataToSend);
+            console.log({ body })
 
-            if (response?.data?.success) {
-                sendToast('success', response.data.message);
+            const { data, status } = await createPastQuestion(body);
+
+            console.log('............', data)
+
+            if (data?.success === true) {
+                sendToast('success', data?.message);
                 fetchPastQuestions();
                 setIsDialogOpen(false);
                 resetForm();
             } else {
-                sendToast('error', response.data?.message || 'Failed to create past question');
+                sendToast('error', data?.message || 'Failed to create past question');
             }
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -271,7 +272,7 @@ export default function PastQuestionPage() {
                         </TableHeader>
                         <TableBody>
                             {filteredQuestions.map((question) => (
-                                <TableRow key={question._id}>
+                                <TableRow key={question._id} onClick={() => navigate(`/admin/past-question/details/${question._id}`)} className="cursor-pointer hover:bg-gray-50">
                                     <TableCell>{question.code}</TableCell>
                                     <TableCell>{question.name}</TableCell>
                                     <TableCell>{question.year}</TableCell>

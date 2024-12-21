@@ -14,6 +14,7 @@ import StudentDetailsPage from '../screen/Main/dashboard/student/StudentDetailPa
 import StudentVerificationPage from '../screen/Main/StudentPage/StudentVerificationPage';
 import PastQuestionPage from '../screen/Main/dashboard/past-question/PastQuestionPage';
 import UniversitySelectionPage from '../screen/Auth/UniversitySelectionPage';
+import PastQuestionDetailPage from '../screen/Main/dashboard/past-question/PastQuestionDetailPage';
 
 const Routes = () => {
 
@@ -73,6 +74,10 @@ const Routes = () => {
                         {
                             path: "student/details",
                             element: <StudentDetailsPage />,
+                        },
+                        {
+                            path: "past-question/details/:id",
+                            element: <PastQuestionDetailPage />,
                         },
                         {
                             path: "*",
