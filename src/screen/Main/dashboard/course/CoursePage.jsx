@@ -109,9 +109,8 @@ export default function CoursePage() {
         course.code.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleNavigate = async () => {
-        console.log('bbbbbbbbbbbbbbbbbb')
-        navigate('/admin/course/details')
+    const handleNavigate = (courseId) => {
+        navigate(`/admin/course/details/${courseId}`);
     };
 
     const fetchCourses = async () => {
@@ -245,7 +244,7 @@ export default function CoursePage() {
                             {filteredCourses.map((course) => (
                                 <TableRow
                                     className='cursor-pointer'
-                                    onClick={() => handleNavigate()}
+                                    onClick={() => handleNavigate(course._id)}
                                     key={course.id}
                                 >
                                     <TableCell>
@@ -258,7 +257,7 @@ export default function CoursePage() {
                                     <TableCell>{course?.name}</TableCell>
                                     <TableCell>₦{course?.level[0]}</TableCell>
                                     <TableCell>20</TableCell>
-                                    <TableCell>{course?.lessons.length || 0}</TableCell>
+                                    <TableCell>{course?.lessons?.length || 0}</TableCell>
                                     <TableCell>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>

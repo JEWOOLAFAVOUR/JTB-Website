@@ -68,7 +68,7 @@ const Routes = () => {
                             element: <ProfilePage />,
                         },
                         {
-                            path: "course/details",
+                            path: "course/details/:courseId",
                             element: <CourseDetail />,
                         },
                         {
