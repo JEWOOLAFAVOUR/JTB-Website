@@ -4,9 +4,6 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { getProfile, getUserChannel, loginUser } from "../../api/auth";
 import { Roller, sendToast } from "../../components/utilis";
-import { useDispatch } from "react-redux";
-import { updateUserAccessToken } from "../../redux/actions/authAction";
-import { updateChannel } from "../../redux/actions/midAction";
 import useAuthStore from "../../zustand/useAuthStore";
 
 export default function LoginPage() {

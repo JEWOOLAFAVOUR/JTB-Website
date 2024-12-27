@@ -1,8 +1,11 @@
 import axios from "axios";
-import constants from '../redux/constants';
 import useAuthStore from "../zustand/useAuthStore";
 
-const { BASE_URL } = constants;
+
+const BASE_URL = 'https://study-padi-api-113537a2b48f.herokuapp.com/api/v1/';
+// const BASE_URL = 'http://localhost:8000/api/v1'
+
+// const BASE_URL: 'https://studypadi.onrender.com/api/v1',
 
 const client = axios.create({ baseURL: BASE_URL });
 
