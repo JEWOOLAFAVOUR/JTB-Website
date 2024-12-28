@@ -15,6 +15,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { sendToast } from '../../../../components/utilis';
+import { useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
     name: z.string().min(1, 'Contest name is required'),
@@ -24,6 +25,7 @@ const formSchema = z.object({
 });
 
 export default function ContestPage() {
+    const navigate = useNavigate();
     const [contests, setContests] = useState([
         {
             id: 1,
@@ -224,7 +226,10 @@ export default function ContestPage() {
                         </TableHeader>
                         <TableBody>
                             {contests.map((contest) => (
-                                <TableRow key={contest.id}>
+                                <TableRow
+                                    onClick={() => navigate(`/admin/contest/details/${33}}`)}
+                                    className="cursor-pointer"
+                                    key={contest.id}>
                                     <TableCell className="font-medium">{contest.name}</TableCell>
                                     <TableCell>{format(new Date(contest.startTime), "PPp")}</TableCell>
                                     <TableCell>{format(new Date(contest.endTime), "PPp")}</TableCell>

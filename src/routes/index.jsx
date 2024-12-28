@@ -17,6 +17,7 @@ import UniversitySelectionPage from '../screen/Auth/UniversitySelectionPage';
 import PastQuestionDetailPage from '../screen/Main/dashboard/past-question/PastQuestionDetailPage';
 import LessonQuestionPage from '../screen/Main/dashboard/course/LessonQuestionPage';
 import ContestPage from '../screen/Main/dashboard/contest/ContestPage';
+import ContestDetailPage from '../screen/Main/dashboard/contest/ContestDetailPage';
 
 const Routes = () => {
 
@@ -88,6 +89,10 @@ const Routes = () => {
                         {
                             path: "past-question/details/:id",
                             element: <PastQuestionDetailPage />,
+                        },
+                        {
+                            path: "contest/details/:id",
+                            element: <ContestDetailPage />,
                         },
                         {
                             path: "*",
