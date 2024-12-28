@@ -16,6 +16,7 @@ import PastQuestionPage from '../screen/Main/dashboard/past-question/PastQuestio
 import UniversitySelectionPage from '../screen/Auth/UniversitySelectionPage';
 import PastQuestionDetailPage from '../screen/Main/dashboard/past-question/PastQuestionDetailPage';
 import LessonQuestionPage from '../screen/Main/dashboard/course/LessonQuestionPage';
+import ContestPage from '../screen/Main/dashboard/contest/ContestPage';
 
 const Routes = () => {
 
@@ -63,6 +64,10 @@ const Routes = () => {
                         {
                             path: "transaction",
                             element: <TransactionPage />,
+                        },
+                        {
+                            path: "contest",
+                            element: <ContestPage />,
                         },
                         {
                             path: "profile",

@@ -35,6 +35,11 @@ const items = [
     icon: BookText,
   },
   {
+    title: "Contests",
+    url: "/admin/contest", // Add a placeholder for Settings
+    icon: BookText,
+  },
+  {
     title: "Student",
     url: "/admin/student", // Add a placeholder for Settings
     icon: Users,
