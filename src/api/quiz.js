@@ -205,3 +205,25 @@ export const getPremiumUsers = async (universityId) => {
     const response = await makeApiRequest('GET', `/user/premium-users/${universityId}`,);
     return response;
 };
+
+// CONTEST
+export const createContest = async (data) => {
+    const response = await makeApiRequest('POST', `/quiz/contest`, data);
+    return response;
+};
+
+export const getContest = async (data) => {
+    const response = await makeApiRequest('GET', `/quiz/contest`, data);
+    return response;
+};
+
+export const editContest = async (contestId, data) => {
+    const response = await makeApiRequest('PUT', `/quiz/contest/${contestId}`, data);
+    return response;
+};
+
+// PUBLISH CONTEST
+export const publishContest = async (contestId) => {
+    const response = await makeApiRequest('POST', `/quiz/contest/publish/${contestId}`, data);
+    return response;
+};
