@@ -96,3 +96,27 @@ export const generateChannelLink = async (channelId) => {
     return response;
 };
 
+
+// course code 
+
+export const createCourseCode = async (data) => {
+    const response = await makeApiRequest('POST', '/user/course_code', data);
+    return response;
+};
+
+export const getCourseCode = async (data) => {
+    const response = await makeApiRequest('GET', '/user/course_code', data);
+    return response;
+};
+
+export const editCourseCode = async (data, course_code_id) => {
+    const response = await makeApiRequest('PUT', `/user/course_code/${course_code_id}`, data);
+    return response;
+};
+
+export const deleteCourseCode = async (course_code_id) => {
+    const response = await makeApiRequest('DELETE', `/user/course_code/${course_code_id}`,);
+    return response;
+};
+
+

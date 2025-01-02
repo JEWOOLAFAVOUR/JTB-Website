@@ -105,8 +105,8 @@ export default function CoursePage() {
 
     // Filtered courses based on search
     const filteredCourses = courses.filter(course =>
-        course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.code.toLowerCase().includes(searchTerm.toLowerCase())
+        course?.course_code?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course?.course_code?.code.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleNavigate = (courseId) => {
@@ -253,9 +253,9 @@ export default function CoursePage() {
                                             onCheckedChange={() => toggleCourseSelection(course.id)}
                                         />
                                     </TableCell>
-                                    <TableCell>{course?.code}</TableCell>
-                                    <TableCell>{course?.name}</TableCell>
-                                    <TableCell>₦{course?.level[0]}</TableCell>
+                                    <TableCell>{course?.code || course?.course_code?.code}</TableCell>
+                                    <TableCell>{course?.name || course?.course_code?.name}</TableCell>
+                                    <TableCell>{course?.level[0] || course?.course_code?.level[0]}</TableCell>
                                     <TableCell>20</TableCell>
                                     <TableCell>{course?.lessons?.length || 0}</TableCell>
                                     <TableCell>
