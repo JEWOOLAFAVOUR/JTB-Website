@@ -14,9 +14,9 @@ import { fetchUniversity, searchCourseCode } from '../../api/auth';
 
 const CourseForm = ({ onSubmit, initialData = {} }) => {
     const [formData, setFormData] = useState({
-        course_code: '',
-        semester: 'first',
-        university: '',
+        course_code: initialData?.course_code?._id || '',
+        semester: initialData?.semester || 'first',
+        university: initialData?.university?._id || '',
         ...initialData
     });
     const [courseCodes, setCourseCodes] = useState([]);
@@ -24,6 +24,14 @@ const CourseForm = ({ onSubmit, initialData = {} }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // Initialize courseCodes with the existing course_code if it exists
+    useEffect(() => {
+        if (initialData?.course_code) {
+            setCourseCodes([initialData.course_code]);
+            setSearchTerm(`${initialData.course_code.code} - ${initialData.course_code.name}`);
+        }
+    }, [initialData]);
 
     useEffect(() => {
         fetchUniversities();
@@ -42,12 +50,17 @@ const CourseForm = ({ onSubmit, initialData = {} }) => {
 
     const debouncedSearch = useCallback(
         debounce(async (search) => {
+            // Don't search if we're showing an existing course code and haven't modified the search
+            if (initialData?.course_code &&
+                search === `${initialData.course_code.code} - ${initialData.course_code.name}`) {
+                return;
+            }
+
             if (search.length > 2) {
                 setIsLoading(true);
                 setError('');
                 try {
                     const { data } = await searchCourseCode(search);
-                    console.log('API Response:', data); // Add this line for debugging
                     if (data?.success && Array.isArray(data.data)) {
                         setCourseCodes(data.data);
                     } else {
@@ -65,17 +78,13 @@ const CourseForm = ({ onSubmit, initialData = {} }) => {
                 setCourseCodes([]);
             }
         }, 300),
-        []
+        [initialData]
     );
 
     const handleSearchChange = (e) => {
         const value = e.target.value;
         setSearchTerm(value);
         debouncedSearch(value);
-    };
-
-    const handleChange = (field) => (e) => {
-        setFormData({ ...formData, [field]: e.target.value });
     };
 
     const handleSubmit = (e) => {
@@ -96,10 +105,24 @@ const CourseForm = ({ onSubmit, initialData = {} }) => {
                     />
                     <Select
                         value={formData.course_code}
-                        onValueChange={(value) => setFormData({ ...formData, course_code: value })}
+                        onValueChange={(value) => {
+                            const selectedCourse = courseCodes.find(c => c._id === value);
+                            setFormData({
+                                ...formData,
+                                course_code: value,
+                                // Update search term to reflect selection
+                                searchTerm: selectedCourse ?
+                                    `${selectedCourse.code} - ${selectedCourse.name}` :
+                                    searchTerm
+                            });
+                        }}
                     >
                         <SelectTrigger>
-                            <SelectValue placeholder="Select a course code" />
+                            <SelectValue placeholder="Select a course code">
+                                {initialData?.course_code ?
+                                    `${initialData.course_code.code} - ${initialData.course_code.name}` :
+                                    "Select a course code"}
+                            </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             {isLoading ? (
@@ -111,7 +134,11 @@ const CourseForm = ({ onSubmit, initialData = {} }) => {
                                     </SelectItem>
                                 ))
                             ) : (
-                                <SelectItem value="no-results" disabled>No results found</SelectItem>
+                                <SelectItem value="no-results" disabled>
+                                    {initialData?.course_code ?
+                                        `${initialData.course_code.code} - ${initialData.course_code.name}` :
+                                        "No results found"}
+                                </SelectItem>
                             )}
                         </SelectContent>
                     </Select>

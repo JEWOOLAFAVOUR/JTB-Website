@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Edit, PlusCircle, Search, BookOpen, GraduationCap } from 'lucide-react';
+import { Trash2, Edit, PlusCircle, Search, BookOpen, GraduationCap, Filter } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -31,28 +31,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
-import { fetchAllCourses, createCourse, updateCourse, } from '../../../../api/quiz';
+import { fetchAllCourses, createCourse, updateCourse } from '../../../../api/quiz';
 import { getCourseCode } from '../../../../api/auth';
 import { sendToast } from '../../../../components/utilis';
-// import CourseForm from './CourseForm';
 import CourseForm from '../../../../components/template/CourseForm';
 
 export default function CoursePage() {
     const navigate = useNavigate();
-
     const [courses, setCourses] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [editingCourse, setEditingCourse] = useState(null);
     const [courseCodes, setCourseCodes] = useState([]);
-
-    // console.log('bbbbbbbbbbbbbbbb', courses)
+    const [semesterFilter, setSemesterFilter] = useState('first'); // Default to first semester
 
     const fetchCourses = async () => {
         try {
             const { data } = await fetchAllCourses();
-            // console.log('sssssssssssss', data)
             if (data?.success === true) {
                 setCourses(data?.data);
             } else {
@@ -67,7 +63,7 @@ export default function CoursePage() {
         try {
             const { data } = await getCourseCode();
             if (data?.success) {
-                setCourseCodes(data.data.slice(0, 3)); // Initially show only 3 course codes
+                setCourseCodes(data.data.slice(0, 3));
             } else {
                 sendToast('error', data?.message || 'Failed to fetch course codes');
             }
@@ -111,24 +107,39 @@ export default function CoursePage() {
         }
     };
 
-    // console.log('bbbbbbbbbbbbb', courses)
+    // Helper function to get semester from course
+    const getCourseSemester = (course) => {
+        return course.semester || course.course_code?.semester || 'unknown';
+    };
 
-    const filteredCourses = courses.filter(course =>
-        course?.course_code?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course?.course_code?.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course?.code.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filter courses based on search term and semester
+    const filteredCourses = courses.filter(course => {
+        const matchesSearch = (
+            (course?.course_code?.name || course?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (course?.course_code?.code || course?.code || '').toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
-    console.log('/////////////////', filteredCourses)
+        const courseSemester = getCourseSemester(course);
+        const matchesSemester = semesterFilter === 'all' || courseSemester === semesterFilter;
+
+        return matchesSearch && matchesSemester;
+    });
 
     const handleNavigate = (courseId) => {
         navigate(`/admin/course/details/${courseId}`);
     };
 
+    // Calculate totals for each semester
+    const semesterCounts = courses.reduce((acc, course) => {
+        const semester = getCourseSemester(course);
+        acc[semester] = (acc[semester] || 0) + 1;
+        return acc;
+    }, {});
+
     return (
         <div className="p-6 space-y-6">
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
@@ -140,13 +151,20 @@ export default function CoursePage() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Active Levels</CardTitle>
+                        <CardTitle className="text-sm font-medium">First Semester</CardTitle>
                         <GraduationCap className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
-                            {new Set(courses.flatMap(course => course.level)).size}
-                        </div>
+                        <div className="text-2xl font-bold">{semesterCounts.first || 0}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Second Semester</CardTitle>
+                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{semesterCounts.second || 0}</div>
                     </CardContent>
                 </Card>
             </div>
@@ -154,19 +172,41 @@ export default function CoursePage() {
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Courses</CardTitle>
-                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button>
-                                <PlusCircle className="mr-2 h-4 w-4" /> Add Course
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Add New Course</DialogTitle>
-                            </DialogHeader>
-                            <CourseForm onSubmit={handleCreateCourse} courseCodes={courseCodes} />
-                        </DialogContent>
-                    </Dialog>
+                    <div className="flex gap-4">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    <Filter className="mr-2 h-4 w-4" />
+                                    {semesterFilter === 'all' ? 'All Semesters' :
+                                        semesterFilter === 'first' ? 'First Semester' : 'Second Semester'}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => setSemesterFilter('all')}>
+                                    All Semesters
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setSemesterFilter('first')}>
+                                    First Semester
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setSemesterFilter('second')}>
+                                    Second Semester
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button>
+                                    <PlusCircle className="mr-2 h-4 w-4" /> Add Course
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Add New Course</DialogTitle>
+                                </DialogHeader>
+                                <CourseForm onSubmit={handleCreateCourse} courseCodes={courseCodes} />
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 </CardHeader>
 
                 <CardContent>
@@ -205,13 +245,15 @@ export default function CoursePage() {
                                     <TableCell>{course?.course_code?.code || course?.code}</TableCell>
                                     <TableCell>{course?.course_code?.name || course?.name}</TableCell>
                                     <TableCell>
-                                        {course.course_code?.level.map((level, index) => (
+                                        {(course.course_code?.level || course.level || []).map((level, index) => (
                                             <Badge key={index} variant="secondary" className="mr-1">
                                                 {level}
                                             </Badge>
                                         ))}
                                     </TableCell>
-                                    <TableCell className="capitalize">{course.semester}</TableCell>
+                                    <TableCell className="capitalize">
+                                        {getCourseSemester(course)}
+                                    </TableCell>
                                     <TableCell>{course.lessons?.length || 0}</TableCell>
                                     <TableCell>
                                         <DropdownMenu>
@@ -265,4 +307,3 @@ export default function CoursePage() {
         </div>
     );
 }
-
