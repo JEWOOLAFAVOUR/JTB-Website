@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { debounce } from 'lodash';
 import {
     Card,
     CardContent,
     CardHeader,
-    CardTitle
+    CardTitle,
 } from "@/components/ui/card";
 import {
     Table,
@@ -11,14 +12,14 @@ import {
     TableCell,
     TableHead,
     TableHeader,
-    TableRow
+    TableRow,
 } from "@/components/ui/table";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,82 +28,115 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from 'react-router-dom';
-import { fetchAllCourses, createCourse, updateCourse } from '../../../../api/quiz';
+import { createCourseCode, deleteCourseCode, editCourseCode, getCourseCode } from '../../../../api/auth';
 import { sendToast } from '../../../../components/utilis';
-import CourseForm from '../../../../components/template/CourseForm';
+import CourseCodeForm from '../../../../components/template/CourseCodeForm';
 
-export default function CoursePage() {
-    const navigate = useNavigate();
-
-    const [courses, setCourses] = useState([]);
+const CourseCodePage = () => {
+    const [courseCodes, setCourseCodes] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const [editingCourse, setEditingCourse] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [formData, setFormData] = useState({
+        name: '',
+        code: '',
+        semester: 'first',
+        level: []
+    });
+    const [editingId, setEditingId] = useState(null);
 
-    const fetchCourses = async () => {
-        setIsLoading(true);
+    const fetchCourseCodes = async () => {
         try {
-            const { data } = await fetchAllCourses();
+            const { data } = await getCourseCode();
             if (data?.success) {
-                setCourses(data.data);
+                setCourseCodes(data?.data || []);
             } else {
-                sendToast('error', data?.message || 'Failed to fetch courses');
+                sendToast('error', data?.message)
             }
         } catch (error) {
-            sendToast('error', 'An error occurred while fetching courses');
-        } finally {
-            setIsLoading(false);
+            console.error('Error fetching course codes:', error);
+            sendToast('error', 'Failed to fetch course codes');
         }
     };
 
-    useEffect(() => {
-        fetchCourses();
-    }, []);
-
-    const handleCreateCourse = async (courseData) => {
+    const handleCreateCourseCode = async (formValues) => {
         try {
-            const { data } = await createCourse(courseData);
+            if (!formValues.name) throw new Error("Add a Course Name!");
+            if (!formValues.code) throw new Error("Add a Course Code!");
+            if (!formValues.level || formValues.level.length === 0) throw new Error("Add a Level!");
+
+            const { data } = await createCourseCode(formValues);
             if (data?.success) {
-                sendToast('success', 'Course created successfully');
+                await fetchCourseCodes();
+                sendToast('success', 'Course code created successfully');
                 setIsAddDialogOpen(false);
-                fetchCourses();
+                setFormData({ name: '', code: '', semester: 'first', level: [] });
             } else {
-                sendToast('error', data?.message || 'Failed to create course');
+                sendToast('error', data?.message);
             }
         } catch (error) {
-            sendToast('error', 'An error occurred while creating the course');
+            console.error('Error creating course code:', error);
+            sendToast('error', error.message || 'Failed to create course code');
         }
     };
 
-    const handleEditCourse = async (courseData) => {
+    const handleEditCourseCode = async (formValues) => {
         try {
-            const { data } = await updateCourse(courseData._id, courseData);
+            if (!formValues.name) throw new Error("Add a Course Name!");
+            if (!formValues.code) throw new Error("Add a Course Code!");
+            if (!formValues.level || formValues.level.length === 0) throw new Error("Add a Level!");
+
+            const { data } = await editCourseCode(formValues, editingId);
             if (data?.success) {
-                sendToast('success', 'Course updated successfully');
+                await fetchCourseCodes();
+                sendToast('success', data?.message);
                 setIsEditDialogOpen(false);
-                fetchCourses();
+                setFormData({ name: '', code: '', semester: 'first', level: [] });
+                setEditingId(null);
             } else {
-                sendToast('error', data?.message || 'Failed to update course');
+                sendToast('error', data?.message);
             }
         } catch (error) {
-            sendToast('error', 'An error occurred while updating the course');
+            sendToast('error', error.message || 'Failed to update course code');
         }
     };
 
-    const filteredCourses = courses.filter(course =>
-        course?.course_code?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course?.course_code?.code.toLowerCase().includes(searchTerm.toLowerCase())
+    const handleDeleteCourseCode = async (id) => {
+        try {
+            const { data } = await deleteCourseCode(id);
+            if (data?.success) {
+                sendToast('success', data?.message);
+                await fetchCourseCodes();
+            } else {
+                sendToast('error', data?.message);
+            }
+        } catch (error) {
+            sendToast('error', 'Failed to delete course code');
+        }
+    };
+
+    const debouncedSearch = useCallback(
+        debounce((term) => {
+            setSearchTerm(term);
+        }, 300),
+        []
     );
 
-    const handleNavigate = (courseId) => {
-        navigate(`/admin/course/details/${courseId}`);
+    const handleSearchChange = (e) => {
+        debouncedSearch(e.target.value);
     };
+
+    const filteredCourseCodes = courseCodes.filter(course =>
+        course?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course?.code.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    useEffect(() => {
+        fetchCourseCodes();
+    }, []);
 
     return (
         <div className="p-6 space-y-6">
@@ -110,11 +144,11 @@ export default function CoursePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Course Codes</CardTitle>
                         <BookOpen className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{courses.length}</div>
+                        <div className="text-2xl font-bold">{courseCodes.length}</div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -124,26 +158,30 @@ export default function CoursePage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
-                            {new Set(courses.flatMap(course => course.course_code?.level || [])).size}
+                            {new Set(courseCodes.flatMap(course => course.level)).size}
                         </div>
                     </CardContent>
                 </Card>
             </div>
 
+            {/* Main Content Card */}
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Courses</CardTitle>
+                    <CardTitle>Course Codes</CardTitle>
                     <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                         <DialogTrigger asChild>
                             <Button>
-                                <PlusCircle className="mr-2 h-4 w-4" /> Add Course
+                                <PlusCircle className="mr-2 h-4 w-4" /> Add Course Code
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Add New Course</DialogTitle>
+                                <DialogTitle>Add New Course Code</DialogTitle>
                             </DialogHeader>
-                            <CourseForm onSubmit={handleCreateCourse} />
+                            <CourseCodeForm
+                                onSubmit={handleCreateCourseCode}
+                                onFormDataChange={setFormData}
+                            />
                         </DialogContent>
                     </Dialog>
                 </CardHeader>
@@ -154,50 +192,41 @@ export default function CoursePage() {
                         <div className="relative flex-1 max-w-sm">
                             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Search courses..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Search course codes..."
+                                onChange={handleSearchChange}
                                 className="pl-8"
                             />
                         </div>
                     </div>
 
-                    {/* Courses Table */}
-                    {isLoading ? (
-                        <div className="text-center py-4">Loading courses...</div>
-                    ) : (
+                    {/* Table */}
+                    <div className="rounded-md border">
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Course Code</TableHead>
                                     <TableHead>Course Name</TableHead>
-                                    <TableHead>Level</TableHead>
                                     <TableHead>Semester</TableHead>
-                                    <TableHead>University</TableHead>
-                                    <TableHead>Lessons</TableHead>
-                                    <TableHead>Actions</TableHead>
+                                    <TableHead>Levels</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredCourses.map((course) => (
-                                    <TableRow
-                                        key={course._id}
-                                        className="cursor-pointer"
-                                        onClick={() => handleNavigate(course._id)}
-                                    >
-                                        <TableCell>{course.course_code?.code}</TableCell>
-                                        <TableCell>{course.course_code?.name}</TableCell>
+                                {filteredCourseCodes.map((course) => (
+                                    <TableRow key={course?._id}>
+                                        <TableCell className="font-medium">{course?.code}</TableCell>
+                                        <TableCell>{course?.name}</TableCell>
+                                        <TableCell className="capitalize">{course?.semester}</TableCell>
                                         <TableCell>
-                                            {course.course_code?.level.map((level, index) => (
-                                                <Badge key={index} variant="secondary" className="mr-1">
-                                                    {level}
-                                                </Badge>
-                                            ))}
+                                            <div className="flex flex-wrap gap-1">
+                                                {course?.level.map((level) => (
+                                                    <Badge key={level} variant="secondary">
+                                                        {level}
+                                                    </Badge>
+                                                ))}
+                                            </div>
                                         </TableCell>
-                                        <TableCell className="capitalize">{course.semester}</TableCell>
-                                        <TableCell>{course.university?.name}</TableCell>
-                                        <TableCell>{course.lessons?.length || 0}</TableCell>
-                                        <TableCell>
+                                        <TableCell className="text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button variant="ghost" size="icon">
@@ -205,19 +234,16 @@ export default function CoursePage() {
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent>
-                                                    <DropdownMenuItem onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setEditingCourse(course);
+                                                    <DropdownMenuItem onClick={() => {
+                                                        setFormData(course);
+                                                        setEditingId(course._id);
                                                         setIsEditDialogOpen(true);
                                                     }}>
                                                         <Edit className="mr-2 h-4 w-4" /> Edit
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         className="text-red-600"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            // Implement delete functionality
-                                                        }}
+                                                        onClick={() => handleDeleteCourseCode(course._id)}
                                                     >
                                                         <Trash2 className="mr-2 h-4 w-4" /> Delete
                                                     </DropdownMenuItem>
@@ -228,27 +254,28 @@ export default function CoursePage() {
                                 ))}
                             </TableBody>
                         </Table>
-                    )}
+                    </div>
                 </CardContent>
             </Card>
 
-            {/* Edit Course Dialog */}
+            {/* Edit Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Edit Course</DialogTitle>
+                        <DialogTitle>Edit Course Code</DialogTitle>
                     </DialogHeader>
-                    {editingCourse && (
-                        <CourseForm
-                            onSubmit={handleEditCourse}
-                            initialData={editingCourse}
-                        />
-                    )}
+                    <CourseCodeForm
+                        onSubmit={handleEditCourseCode}
+                        initialData={formData}
+                        onFormDataChange={setFormData}
+                    />
                 </DialogContent>
             </Dialog>
         </div>
     );
-}
+};
+
+export default CourseCodePage;
 
 
 
