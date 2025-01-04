@@ -64,11 +64,14 @@ export default function CourseDetail() {
     const handleCreateLesson = async () => {
         try {
             const { data } = await createLesson(newLesson);
+            console.log('..........', data, newLesson)
             if (data?.success) {
-                sendToast('success', 'Lesson created successfully');
+                sendToast('success', data?.message)
                 setIsAddLessonOpen(false);
                 fetchLessons();
                 setNewLesson({ name: '', description: '', courseId });
+            } else {
+                sendToast('error', data?.message);
             }
         } catch (error) {
             sendToast('error', 'Failed to create lesson');
@@ -102,7 +105,7 @@ export default function CourseDetail() {
                 onClick={() => navigate('/admin/course')}
             >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Past Questions
+                Back to Course
             </Button>
             <Tabs defaultValue="lessons" className="w-full">
                 <TabsList>

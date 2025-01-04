@@ -109,6 +109,11 @@ export const getCourseCode = async (data) => {
     return response;
 };
 
+export const searchCourseCode = async (search) => {
+    return await makeApiRequest('GET', `/user/search_course_codes?search=${encodeURIComponent(search)}`);
+};
+
+
 export const editCourseCode = async (data, course_code_id) => {
     const response = await makeApiRequest('PUT', `/user/course_code/${course_code_id}`, data);
     return response;

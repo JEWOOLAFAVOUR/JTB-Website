@@ -22,88 +22,92 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Trash2,
-    Edit,
-    Copy,
-    PlusCircle,
-    Search,
-    Users,
-    DollarSign
-} from 'lucide-react';
+import { Trash2, Edit, PlusCircle, Search, BookOpen, GraduationCap } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
-import { createChannelCourse, generateChannelLink, getChannelCourses } from '../../../../api/auth';
+import { fetchAllCourses, createCourse, updateCourse, } from '../../../../api/quiz';
+import { getCourseCode } from '../../../../api/auth';
 import { sendToast } from '../../../../components/utilis';
-import { fetchAllCourses } from '../../../../api/quiz';
+// import CourseForm from './CourseForm';
+import CourseForm from '../../../../components/template/CourseForm';
 
 export default function CoursePage() {
     const navigate = useNavigate();
 
-    // State management
     const [courses, setCourses] = useState([]);
-    const [selectedCourses, setSelectedCourses] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [newCourse, setNewCourse] = useState({
-        code: '',
-        name: '',
-        level: "",
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [editingCourse, setEditingCourse] = useState(null);
+    const [courseCodes, setCourseCodes] = useState([]);
 
-    });
-
-    // Generate channel name
-    const [channelName, setChannelName] = useState('');
-
-    const generateChannelName = () => {
-        const randomNumber = Math.floor(10000 + Math.random() * 90000);
-        setChannelName(channelLink)
-    };
-
-    // Course management functions
-    const addCourse = async () => {
-        const body = {
-            id: String(courses.length + 1),
-            ...newCourse,
-        };
-
-        console.log({ body });
-
-        const { data, status } = await createChannelCourse(body)
-
-        if (data?.success === true) {
-            sendToast('success', data?.message)
-        } else {
-            sendToast('error', data?.message)
+    const fetchCourses = async () => {
+        try {
+            const { data } = await fetchAllCourses();
+            if (data?.success) {
+                setCourses(data.data);
+            } else {
+                sendToast('error', data?.message || 'Failed to fetch courses');
+            }
+        } catch (error) {
+            sendToast('error', 'An error occurred while fetching courses');
         }
-
-        // setCourses([...courses, newCourseEntry]);
-        // // Reset form
-        // setNewCourse({ code: '', name: '', price: '' });
-        // setChannelName('');
     };
 
-    const deleteCourse = (id) => {
-        setCourses(courses.filter(course => course.id !== id));
+    const fetchInitialCourseCodes = async () => {
+        try {
+            const { data } = await getCourseCode();
+            if (data?.success) {
+                setCourseCodes(data.data.slice(0, 3)); // Initially show only 3 course codes
+            } else {
+                sendToast('error', data?.message || 'Failed to fetch course codes');
+            }
+        } catch (error) {
+            sendToast('error', 'An error occurred while fetching course codes');
+        }
     };
 
-    // Selection handling
-    const toggleCourseSelection = (id) => {
-        setSelectedCourses(prev =>
-            prev.includes(id)
-                ? prev.filter(courseId => courseId !== id)
-                : [...prev, id]
-        );
+    useEffect(() => {
+        fetchCourses();
+        fetchInitialCourseCodes();
+    }, []);
+
+    const handleCreateCourse = async (courseData) => {
+        try {
+            const { data } = await createCourse(courseData);
+            if (data?.success) {
+                sendToast('success', 'Course created successfully');
+                setIsAddDialogOpen(false);
+                fetchCourses();
+            } else {
+                sendToast('error', data?.message || 'Failed to create course');
+            }
+        } catch (error) {
+            sendToast('error', 'An error occurred while creating the course');
+        }
     };
 
-    // Filtered courses based on search
+    const handleEditCourse = async (courseData) => {
+        try {
+            const { data } = await updateCourse(courseData._id, courseData);
+            if (data?.success) {
+                sendToast('success', 'Course updated successfully');
+                setIsEditDialogOpen(false);
+                fetchCourses();
+            } else {
+                sendToast('error', data?.message || 'Failed to update course');
+            }
+        } catch (error) {
+            sendToast('error', 'An error occurred while updating the course');
+        }
+    };
+
     const filteredCourses = courses.filter(course =>
         course?.course_code?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course?.course_code?.code.toLowerCase().includes(searchTerm.toLowerCase())
@@ -113,33 +117,38 @@ export default function CoursePage() {
         navigate(`/admin/course/details/${courseId}`);
     };
 
-    const fetchCourses = async () => {
-        const { data, status } = await fetchAllCourses()
-
-        if (data?.success === true) {
-            setCourses(data?.data)
-        } else {
-            sendToast('error', data?.message)
-        }
-
-        console.log('response feom courses', data)
-    }
-
-
-    useEffect(() => {
-        fetchCourses();
-    }, [])
-
     return (
         <div className="p-6 space-y-6">
-            <Card>
-                <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                    <CardTitle className="text-xl sm:text-2xl">Course Management</CardTitle>
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
+                        <BookOpen className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{courses.length}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Active Levels</CardTitle>
+                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">
+                            {new Set(courses.flatMap(course => course.level)).size}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
 
-                    {/* Add Course Dialog */}
-                    <Dialog>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>Courses</CardTitle>
+                    <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button className="mt-4 sm:mt-0">
+                            <Button>
                                 <PlusCircle className="mr-2 h-4 w-4" /> Add Course
                             </Button>
                         </DialogTrigger>
@@ -147,95 +156,33 @@ export default function CoursePage() {
                             <DialogHeader>
                                 <DialogTitle>Add New Course</DialogTitle>
                             </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="code" className="text-right">
-                                        Course Code
-                                    </Label>
-                                    <Input
-                                        id="code"
-                                        value={newCourse.code}
-                                        onChange={(e) => setNewCourse(prev => ({ ...prev, code: e.target.value }))}
-                                        className="col-span-3"
-                                    />
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="name" className="text-right">
-                                        Course Name
-                                    </Label>
-                                    <Input
-                                        id="name"
-                                        value={newCourse.name}
-                                        onChange={(e) => setNewCourse(prev => ({ ...prev, name: e.target.value }))}
-                                        className="col-span-3"
-                                    />
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="price" className="text-right">
-                                        Price
-                                    </Label>
-                                    <Input
-                                        id="price"
-                                        type="number"
-                                        value={newCourse.price}
-                                        onChange={(e) => setNewCourse(prev => ({ ...prev, price: e.target.value }))}
-                                        className="col-span-3"
-                                    />
-                                </div>
-                            </div>
-                            <Button onClick={addCourse}>Save Course</Button>
+                            <CourseForm onSubmit={handleCreateCourse} courseCodes={courseCodes} />
                         </DialogContent>
                     </Dialog>
                 </CardHeader>
 
                 <CardContent>
-                    {/* Search and Filters */}
-                    <div className="flex flex-col sm:flex-row items-center py-4 sm:space-x-2">
-                        <div className="relative flex-1">
+                    {/* Search */}
+                    <div className="flex items-center py-4">
+                        <div className="relative flex-1 max-w-sm">
                             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search courses..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-8 max-w-sm"
+                                className="pl-8"
                             />
                         </div>
-                        <div className="flex space-x-2 mt-4 sm:mt-0">
-                            <Badge variant="secondary" className="flex items-center">
-                                <Users className="mr-1 h-4 w-4" /> {filteredCourses.reduce((sum, course) => sum + course.paidUsers, 0)} Paid Users
-                            </Badge>
-                            <Badge variant="secondary" className="flex items-center">
-                                {/* <DollarSign className="mr-1 h-4 w-4" /> ₦{filteredCourses.reduce((sum, course) => sum + course.totalRevenue, 0).toFixed(2) } Total Revenue */}
-                                <DollarSign className="mr-1 h-4 w-4" /> ₦{0} Total Revenue
-                            </Badge>
-                        </div>
-                        {selectedCourses.length > 0 && (
-                            <Button variant="destructive" size="sm" className="mt-4 sm:mt-0">
-                                Delete Selected
-                            </Button>
-                        )}
                     </div>
 
                     {/* Courses Table */}
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[20px]">
-                                    <Checkbox
-                                        checked={selectedCourses.length === courses.length}
-                                        onCheckedChange={() =>
-                                            setSelectedCourses(
-                                                selectedCourses.length === courses.length
-                                                    ? []
-                                                    : courses.map(course => course.id)
-                                            )
-                                        }
-                                    />
-                                </TableHead>
                                 <TableHead>Course Code</TableHead>
                                 <TableHead>Course Name</TableHead>
                                 <TableHead>Level</TableHead>
-                                <TableHead>Questions</TableHead>
+                                <TableHead>Semester</TableHead>
                                 <TableHead>Lessons</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
@@ -243,30 +190,43 @@ export default function CoursePage() {
                         <TableBody>
                             {filteredCourses.map((course) => (
                                 <TableRow
-                                    className='cursor-pointer'
+                                    key={course._id}
+                                    className="cursor-pointer"
                                     onClick={() => handleNavigate(course._id)}
-                                    key={course.id}
                                 >
+                                    <TableCell>{course.course_code?.code}</TableCell>
+                                    <TableCell>{course.course_code?.name}</TableCell>
                                     <TableCell>
-                                        <Checkbox
-                                            checked={selectedCourses.includes(course.id)}
-                                            onCheckedChange={() => toggleCourseSelection(course.id)}
-                                        />
+                                        {course.course_code?.level.map((level, index) => (
+                                            <Badge key={index} variant="secondary" className="mr-1">
+                                                {level}
+                                            </Badge>
+                                        ))}
                                     </TableCell>
-                                    <TableCell>{course?.code || course?.course_code?.code}</TableCell>
-                                    <TableCell>{course?.name || course?.course_code?.name}</TableCell>
-                                    <TableCell>{course?.level[0] || course?.course_code?.level[0]}</TableCell>
-                                    <TableCell>20</TableCell>
-                                    <TableCell>{course?.lessons?.length || 0}</TableCell>
+                                    <TableCell className="capitalize">{course.semester}</TableCell>
+                                    <TableCell>{course.lessons?.length || 0}</TableCell>
                                     <TableCell>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" size="icon">
+                                                <Button variant="ghost" size="icon">
                                                     <Edit className="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent>
-                                                <DropdownMenuItem onClick={() => deleteCourse(course.id)}>
+                                                <DropdownMenuItem onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setEditingCourse(course);
+                                                    setIsEditDialogOpen(true);
+                                                }}>
+                                                    <Edit className="mr-2 h-4 w-4" /> Edit
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    className="text-red-600"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        // Implement delete functionality
+                                                    }}
+                                                >
                                                     <Trash2 className="mr-2 h-4 w-4" /> Delete
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -278,7 +238,23 @@ export default function CoursePage() {
                     </Table>
                 </CardContent>
             </Card>
+
+            {/* Edit Course Dialog */}
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Edit Course</DialogTitle>
+                    </DialogHeader>
+                    {editingCourse && (
+                        <CourseForm
+                            onSubmit={handleEditCourse}
+                            initialData={editingCourse}
+                            courseCodes={courseCodes}
+                        />
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
-};
+}
 

@@ -186,7 +186,7 @@ export default function LessonQuestionPage() {
                 onClick={() => navigate(-1)}
             >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Past Questions
+                Back to Lesson
             </Button>
 
             {/* Overview Cards */}
