@@ -2,8 +2,8 @@ import axios from "axios";
 import useAuthStore from "../zustand/useAuthStore";
 
 
-// const BASE_URL = 'https://study-padi-api-113537a2b48f.herokuapp.com/api/v1/';
-const BASE_URL = 'http://localhost:8000/api/v1'
+const BASE_URL = 'https://study-padi-api-113537a2b48f.herokuapp.com/api/v1/';
+// const BASE_URL = 'http://localhost:8000/api/v1'
 
 // const BASE_URL: 'https://studypadi.onrender.com/api/v1',
 

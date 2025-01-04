@@ -59,6 +59,7 @@ export default function CoursePage() {
         }
     };
 
+
     const fetchInitialCourseCodes = async () => {
         try {
             const { data } = await getCourseCode();

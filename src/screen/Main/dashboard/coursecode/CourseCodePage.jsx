@@ -44,7 +44,8 @@ const CourseCodePage = () => {
         name: '',
         code: '',
         semester: 'first',
-        level: []
+        level: [],
+        university: '',
     });
     const [editingId, setEditingId] = useState(null);
 
@@ -67,13 +68,14 @@ const CourseCodePage = () => {
             if (!formValues.name) throw new Error("Add a Course Name!");
             if (!formValues.code) throw new Error("Add a Course Code!");
             if (!formValues.level || formValues.level.length === 0) throw new Error("Add a Level!");
+            if (!formValues.university) throw new Error("Select a University!");
 
             const { data } = await createCourseCode(formValues);
             if (data?.success) {
                 await fetchCourseCodes();
                 sendToast('success', 'Course code created successfully');
                 setIsAddDialogOpen(false);
-                setFormData({ name: '', code: '', semester: 'first', level: [] });
+                setFormData({ name: '', code: '', semester: 'first', level: [], university: '' });
             } else {
                 sendToast('error', data?.message);
             }
@@ -94,7 +96,7 @@ const CourseCodePage = () => {
                 await fetchCourseCodes();
                 sendToast('success', data?.message);
                 setIsEditDialogOpen(false);
-                setFormData({ name: '', code: '', semester: 'first', level: [] });
+                setFormData({ name: '', code: '', semester: 'first', level: [], university: '' });
                 setEditingId(null);
             } else {
                 sendToast('error', data?.message);

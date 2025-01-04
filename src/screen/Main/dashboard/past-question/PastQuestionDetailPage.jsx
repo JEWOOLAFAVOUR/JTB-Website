@@ -183,6 +183,18 @@ export default function PastQuestionDetailPage() {
                             )}
                         </div>
 
+                        {/* Explanation Section */}
+                        {pastQuestion.explanation && (
+                            <div className="mt-6">
+                                <h3 className="text-lg font-semibold mb-4">Explanation</h3>
+                                <div
+                                    className="py-7 rounded-lg shadow"
+                                    dangerouslySetInnerHTML={{ __html: pastQuestion.explanation }}
+                                ></div>
+                            </div>
+                        )}
+
+
                         <div className="mt-6">
                             <h3 className="text-lg font-semibold mb-2">Additional Information</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
