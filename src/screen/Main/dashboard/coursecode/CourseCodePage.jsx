@@ -21,24 +21,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Trash2,
-    Edit,
-    PlusCircle,
-    Search,
-    BookOpen,
-    GraduationCap
-} from 'lucide-react';
+import { Trash2, Edit, PlusCircle, Search, BookOpen, GraduationCap } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -48,123 +33,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { createCourseCode, deleteCourseCode, editCourseCode, getCourseCode } from '../../../../api/auth';
 import { sendToast } from '../../../../components/utilis';
-
-// Separate form component with local state management
-const CourseCodeForm = ({ onSubmit, initialData = {}, onFormDataChange }) => {
-    // Local state for immediate input updates
-    const [localFormData, setLocalFormData] = useState({
-        name: initialData.name || '',
-        code: initialData.code || '',
-        semester: initialData.semester || 'first',
-        level: initialData.level || []
-    });
-
-    // Debounced function to update parent state
-    const debouncedSetFormData = useCallback(
-        debounce((newValue) => {
-            onFormDataChange(newValue);
-        }, 300),
-        [onFormDataChange]
-    );
-
-    // Handle input changes
-    const handleInputChange = (field) => (e) => {
-        const newValue = {
-            ...localFormData,
-            [field]: e.target.value
-        };
-        setLocalFormData(newValue);
-        debouncedSetFormData(newValue);
-    };
-
-    // Handle level selection
-    const handleLevelToggle = (level) => {
-        const newLevels = localFormData.level.includes(level)
-            ? localFormData.level.filter(l => l !== level)
-            : [...localFormData.level, level];
-
-        const newValue = {
-            ...localFormData,
-            level: newLevels
-        };
-
-        setLocalFormData(newValue);
-        debouncedSetFormData(newValue);
-    };
-
-    // Handle semester selection
-    const handleSemesterChange = (value) => {
-        const newValue = {
-            ...localFormData,
-            semester: value
-        };
-        setLocalFormData(newValue);
-        debouncedSetFormData(newValue);
-    };
-
-    const levels = ["100 Level", "200 Level", "300 Level", "400 Level", "500 Level"];
-
-    return (
-        <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">Course Name</Label>
-                <Input
-                    id="name"
-                    value={localFormData.name}
-                    onChange={handleInputChange('name')}
-                    className="col-span-3"
-                    placeholder="Introduction to Biology"
-                />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="code" className="text-right">Course Code</Label>
-                <Input
-                    id="code"
-                    value={localFormData.code}
-                    onChange={handleInputChange('code')}
-                    className="col-span-3"
-                    placeholder="BIO 101"
-                />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="semester" className="text-right">Semester</Label>
-                <Select
-                    value={localFormData.semester}
-                    onValueChange={handleSemesterChange}
-                >
-                    <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Select semester" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="first">First</SelectItem>
-                        <SelectItem value="second">Second</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">Level</Label>
-                <div className="col-span-3 flex flex-wrap gap-2">
-                    {levels.map((level) => (
-                        <Button
-                            key={level}
-                            variant={localFormData.level.includes(level) ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => handleLevelToggle(level)}
-                        >
-                            {level}
-                        </Button>
-                    ))}
-                </div>
-            </div>
-            <div className="flex justify-end">
-                <Button onClick={() => onSubmit(localFormData)}>Save Course Code</Button>
-            </div>
-        </div>
-    );
-};
+import CourseCodeForm from '../../../../components/template/CourseCodeForm';
 
 const CourseCodePage = () => {
-    // State management
     const [courseCodes, setCourseCodes] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -177,12 +48,11 @@ const CourseCodePage = () => {
     });
     const [editingId, setEditingId] = useState(null);
 
-    // Fetch course codes
     const fetchCourseCodes = async () => {
         try {
             const { data } = await getCourseCode();
             if (data?.success) {
-                setCourseCodes(data?.data);
+                setCourseCodes(data?.data || []);
             } else {
                 sendToast('error', data?.message)
             }
@@ -194,14 +64,13 @@ const CourseCodePage = () => {
 
     const handleCreateCourseCode = async (formValues) => {
         try {
-            // Validation
             if (!formValues.name) throw new Error("Add a Course Name!");
             if (!formValues.code) throw new Error("Add a Course Code!");
             if (!formValues.level || formValues.level.length === 0) throw new Error("Add a Level!");
 
             const { data } = await createCourseCode(formValues);
             if (data?.success) {
-                setCourseCodes(data?.data);
+                await fetchCourseCodes();
                 sendToast('success', 'Course code created successfully');
                 setIsAddDialogOpen(false);
                 setFormData({ name: '', code: '', semester: 'first', level: [] });
@@ -216,21 +85,17 @@ const CourseCodePage = () => {
 
     const handleEditCourseCode = async (formValues) => {
         try {
-            // Validation
             if (!formValues.name) throw new Error("Add a Course Name!");
             if (!formValues.code) throw new Error("Add a Course Code!");
             if (!formValues.level || formValues.level.length === 0) throw new Error("Add a Level!");
 
-            let course_code_id = editingId
-
-            const { data } = await editCourseCode(formValues, course_code_id);
+            const { data } = await editCourseCode(formValues, editingId);
             if (data?.success) {
-                setCourseCodes(data?.data);
+                await fetchCourseCodes();
                 sendToast('success', data?.message);
                 setIsEditDialogOpen(false);
                 setFormData({ name: '', code: '', semester: 'first', level: [] });
                 setEditingId(null);
-                await fetchCourseCodes();
             } else {
                 sendToast('error', data?.message);
             }
@@ -241,23 +106,18 @@ const CourseCodePage = () => {
 
     const handleDeleteCourseCode = async (id) => {
         try {
-            let course_code_id = editingId
-
-            const { data } = await deleteCourseCode(course_code_id);
+            const { data } = await deleteCourseCode(id);
             if (data?.success) {
                 sendToast('success', data?.message);
-                setEditingId(null);
                 await fetchCourseCodes();
             } else {
                 sendToast('error', data?.message);
             }
-
         } catch (error) {
             sendToast('error', 'Failed to delete course code');
         }
     };
 
-    // Debounced search
     const debouncedSearch = useCallback(
         debounce((term) => {
             setSearchTerm(term);
@@ -416,6 +276,17 @@ const CourseCodePage = () => {
 };
 
 export default CourseCodePage;
+
+
+
+
+
+
+
+
+
+
+
 
 
 

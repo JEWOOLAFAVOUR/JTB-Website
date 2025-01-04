@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {
@@ -13,33 +13,18 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
+    DialogFooter,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import {
-    PlusCircle,
-    Trash2,
-    Edit,
-    FileText,
-    CheckCircle2,
-    HelpCircle,
-    X,
-    ArrowLeft
-} from 'lucide-react';
-// import useQuestionStore from './question-store';
+import { Input } from "@/components/ui/input";
+import { PlusCircle, Trash2, Edit, FileText, CheckCircle2, HelpCircle, X, ArrowLeft, Search } from 'lucide-react';
 import useQuestionStore from '../../../../zustand/useQuestionStore';
 import { getLessonsQuestions, addQuestionToLesson, editLessonsQuestions, deleteLessonsQuestions } from '../../../../api/quiz';
 import { sendToast } from '../../../../components/utilis';
+import QuestionForm from '../../../../components/template/QuestionForm';
 
 const modules = {
     toolbar: [
@@ -50,12 +35,16 @@ const modules = {
 };
 
 export default function LessonQuestionPage() {
+    const navigate = useNavigate();
     const { lessonId } = useParams();
     const [lesson, setLesson] = useState(null);
     const [questions, setQuestions] = useState([]);
+    const [filteredQuestions, setFilteredQuestions] = useState([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedQuestion, setSelectedQuestion] = useState(null);
+    const [selectedQuestionForDelete, setSelectedQuestionForDelete] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const { getDraftQuestions, setDraftQuestions, clearDraftQuestions } = useQuestionStore();
 
@@ -79,12 +68,20 @@ export default function LessonQuestionPage() {
         setDraftQuestions(lessonId, newQuestions);
     }, [newQuestions, lessonId]);
 
+    useEffect(() => {
+        const filtered = questions.filter(question =>
+            question.question.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredQuestions(filtered);
+    }, [searchTerm, questions]);
+
     const fetchQuestions = async () => {
         try {
             const { data } = await getLessonsQuestions(lessonId);
             if (data?.success) {
                 setLesson(data.data);
                 setQuestions(data.data.questions);
+                setFilteredQuestions(data.data.questions);
             }
         } catch (error) {
             sendToast('error', 'Failed to fetch questions');
@@ -113,7 +110,6 @@ export default function LessonQuestionPage() {
         try {
             const body = { lessonId, questions: newQuestions };
             const { data } = await addQuestionToLesson(body);
-            console.log('d', data)
             if (data?.success === true) {
                 sendToast('success', 'Questions added successfully');
                 setIsAddModalOpen(false);
@@ -138,6 +134,50 @@ export default function LessonQuestionPage() {
         }
     };
 
+    const handleEditQuestion = async (editedQuestion) => {
+        setSelectedQuestion(editedQuestion);
+    };
+
+    const handleSaveEditedQuestion = async () => {
+        try {
+            const { data } = await editLessonsQuestions({
+                lessonId,
+                questionId: selectedQuestion._id,
+                updatedQuestion: selectedQuestion
+            });
+            if (data?.success) {
+                sendToast('success', 'Question updated successfully');
+                setIsEditModalOpen(false);
+                fetchQuestions();
+            } else {
+                sendToast('error', data?.message || data?.error);
+            }
+        } catch (error) {
+            sendToast('error', 'Failed to update question');
+        }
+    };
+
+    const handleDeleteQuestion = async (questionId) => {
+        try {
+            const { data } = await deleteLessonsQuestions({ lessonId, questionId });
+            if (data?.success) {
+                sendToast('success', 'Question deleted successfully');
+                fetchQuestions();
+            } else {
+                sendToast('error', data?.message || data?.error);
+            }
+        } catch (error) {
+            sendToast('error', 'Failed to delete question');
+        }
+    };
+
+    const scrollToQuestion = (index) => {
+        const element = document.getElementById(`question-${index}`);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     return (
         <div className="p-6 space-y-6">
             <Button
@@ -148,6 +188,7 @@ export default function LessonQuestionPage() {
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Past Questions
             </Button>
+
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/10">
@@ -185,7 +226,32 @@ export default function LessonQuestionPage() {
                 </Card>
             </div>
 
-            {/* Questions Table */}
+            {/* Search and Navigation */}
+            <div className="flex items-center space-x-4 mb-4">
+                <div className="relative flex-grow">
+                    <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <Input
+                        type="text"
+                        placeholder="Search questions..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 pr-4 py-2 w-full"
+                    />
+                </div>
+                <div className="flex-shrink-0">
+                    <select
+                        onChange={(e) => scrollToQuestion(parseInt(e.target.value))}
+                        className="border rounded p-2"
+                    >
+                        <option value="">Jump to question</option>
+                        {filteredQuestions.map((_, index) => (
+                            <option key={index} value={index}>Question {index + 1}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            {/* Questions */}
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Questions</CardTitle>
@@ -195,76 +261,23 @@ export default function LessonQuestionPage() {
                                 <PlusCircle className="mr-2 h-4 w-4" /> Add Questions
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-4xl">
+                        <DialogContent className="max-w-4xl" style={{ height: '80vh', overflowY: 'auto' }}>
                             <DialogHeader>
                                 <DialogTitle>Add New Questions</DialogTitle>
                             </DialogHeader>
                             <ScrollArea className="max-h-[600px] pr-4">
-                                {newQuestions.map((question, qIndex) => (
-                                    <div key={qIndex} className="mb-8 p-4 border rounded-lg relative">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="absolute right-2 top-2"
-                                            onClick={() => handleRemoveQuestion(qIndex)}
-                                        >
-                                            <X className="h-4 w-4" />
-                                        </Button>
-
-                                        <div className="mb-4">
-                                            <label className="block mb-2 font-medium">Question {qIndex + 1}</label>
-                                            <ReactQuill
-                                                value={question.question}
-                                                onChange={(value) => {
-                                                    const updated = [...newQuestions];
-                                                    updated[qIndex].question = value;
-                                                    setNewQuestions(updated);
-                                                }}
-                                                modules={modules}
-                                            />
-                                        </div>
-
-                                        {question.options.map((option, oIndex) => (
-                                            <div key={oIndex} className="mb-4">
-                                                <label className="block mb-2 font-medium">
-                                                    Option {option.index}
-                                                    <input
-                                                        type="radio"
-                                                        name={`correct-${qIndex}`}
-                                                        className="ml-2"
-                                                        checked={question.correctAnswer === option.index}
-                                                        onChange={() => {
-                                                            const updated = [...newQuestions];
-                                                            updated[qIndex].correctAnswer = option.index;
-                                                            setNewQuestions(updated);
-                                                        }}
-                                                    />
-                                                </label>
-                                                <ReactQuill
-                                                    value={option.text}
-                                                    onChange={(value) => {
-                                                        const updated = [...newQuestions];
-                                                        updated[qIndex].options[oIndex].text = value;
-                                                        setNewQuestions(updated);
-                                                    }}
-                                                    modules={modules}
-                                                />
-                                            </div>
-                                        ))}
-
-                                        <div className="mb-4">
-                                            <label className="block mb-2 font-medium">Explanation</label>
-                                            <ReactQuill
-                                                value={question.correction}
-                                                onChange={(value) => {
-                                                    const updated = [...newQuestions];
-                                                    updated[qIndex].correction = value;
-                                                    setNewQuestions(updated);
-                                                }}
-                                                modules={modules}
-                                            />
-                                        </div>
-                                    </div>
+                                {newQuestions.map((question, index) => (
+                                    <QuestionForm
+                                        key={index}
+                                        question={question}
+                                        index={index}
+                                        onUpdate={(updatedQuestion) => {
+                                            const updated = [...newQuestions];
+                                            updated[index] = updatedQuestion;
+                                            setNewQuestions(updated);
+                                        }}
+                                        onRemove={() => handleRemoveQuestion(index)}
+                                    />
                                 ))}
                             </ScrollArea>
                             <div className="flex justify-between mt-4">
@@ -277,69 +290,96 @@ export default function LessonQuestionPage() {
                     </Dialog>
                 </CardHeader>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Question</TableHead>
-                                <TableHead>Options</TableHead>
-                                <TableHead>Correct Answer</TableHead>
-                                <TableHead>Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {questions.map((question) => (
-                                <TableRow key={question._id}>
-                                    <TableCell>
-                                        <div dangerouslySetInnerHTML={{ __html: question.question }} />
-                                    </TableCell>
-                                    <TableCell>
+                    <div className="space-y-4">
+                        {filteredQuestions.map((question, index) => (
+                            <Card key={question._id} id={`question-${index}`} className="p-4 shadow-md hover:shadow-lg transition-shadow duration-300">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-lg font-semibold text-primary">Question {index + 1}</h3>
+                                    <div className="flex space-x-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => {
+                                                setSelectedQuestion(question);
+                                                setIsEditModalOpen(true);
+                                            }}
+                                        >
+                                            <Edit className="h-4 w-4 mr-2" /> Edit
+                                        </Button>
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            onClick={() => setSelectedQuestionForDelete(question)}
+                                        >
+                                            <Trash2 className="h-4 w-4 mr-2" /> Delete
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <div className="bg-secondary/10 p-3 rounded-md" dangerouslySetInnerHTML={{ __html: question.question }} />
+                                </div>
+                                <div className="mb-4">
+                                    <h4 className="text-md font-medium mb-2 text-primary">Options:</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                         {question.options.map((option) => (
-                                            <Badge
-                                                key={option._id}
-                                                variant={option.index === question.correctAnswer ? "default" : "secondary"}
-                                                className="mr-2 mb-2"
-                                            >
-                                                {option.index}. <span dangerouslySetInnerHTML={{ __html: option.text }} />
-                                            </Badge>
+                                            <div key={option._id} className="bg-secondary/5 p-2 rounded-md">
+                                                <span className="font-bold mr-2">{String.fromCharCode(64 + option.index)}.</span>
+                                                <span dangerouslySetInnerHTML={{ __html: option.text }} />
+                                            </div>
                                         ))}
-                                    </TableCell>
-                                    <TableCell>{question.correctAnswer}</TableCell>
-                                    <TableCell>
-                                        <div className="flex space-x-2">
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                onClick={() => {
-                                                    setSelectedQuestion(question);
-                                                    setIsEditModalOpen(true);
-                                                }}
-                                            >
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
-                                            <Button
-                                                variant="destructive"
-                                                size="icon"
-                                                onClick={async () => {
-                                                    if (window.confirm('Are you sure you want to delete this question?')) {
-                                                        try {
-                                                            await deleteLessonsQuestions({ questionId: question._id });
-                                                            fetchQuestions();
-                                                        } catch (error) {
-                                                            sendToast('error', 'Failed to delete question');
-                                                        }
-                                                    }
-                                                }}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <h4 className="text-md font-medium mb-2 text-primary">Correct Answer:</h4>
+                                    <div className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 p-2 rounded-md inline-block">
+                                        {String.fromCharCode(64 + question.correctAnswer)}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="text-md font-medium mb-2 text-primary">Explanation:</h4>
+                                    <div className="bg-secondary/10 p-3 rounded-md" dangerouslySetInnerHTML={{ __html: question.correction }} />
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
                 </CardContent>
             </Card>
+
+            {/* Edit Question Modal */}
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+                <DialogContent className="max-w-4xl" style={{ height: '80vh', overflowY: 'auto' }}>
+                    <DialogHeader>
+                        <DialogTitle>Edit Question</DialogTitle>
+                    </DialogHeader>
+                    {selectedQuestion && (
+                        <QuestionForm
+                            question={selectedQuestion}
+                            onUpdate={(updatedQuestion) => setSelectedQuestion(updatedQuestion)}
+                            onCancel={() => setIsEditModalOpen(false)}
+                        />
+                    )}
+                    <DialogFooter>
+                        <Button onClick={handleSaveEditedQuestion}>Save Changes</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Delete Confirmation Modal */}
+            <Dialog open={!!selectedQuestionForDelete} onOpenChange={() => setSelectedQuestionForDelete(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirm Deletion</DialogTitle>
+                    </DialogHeader>
+                    <p>Are you sure you want to delete this question? This action cannot be undone.</p>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setSelectedQuestionForDelete(null)}>Cancel</Button>
+                        <Button variant="destructive" onClick={() => {
+                            handleDeleteQuestion(selectedQuestionForDelete._id);
+                            setSelectedQuestionForDelete(null);
+                        }}>Delete</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
-}
+};
