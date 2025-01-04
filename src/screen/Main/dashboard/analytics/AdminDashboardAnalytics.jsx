@@ -61,44 +61,44 @@ export default function AdminDashboardAnalytics() {
                 {/* Key Metrics Cards */}
                 <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-gray-700">Total Courses</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
                         <BookOpen className="h-5 w-5 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-semibold text-gray-900">{dashboard?.courses || 0}</div>
+                        <div className="text-3xl font-semibold">{dashboard?.courses || 0}</div>
                         <p className="text-xs text-muted-foreground">+20% from last month</p>
                     </CardContent>
                 </Card>
 
                 <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-gray-700">Total Past-Questions</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Past-Questions</CardTitle>
                         <BookOpen className="h-5 w-5 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-semibold text-gray-900">{dashboard?.pastQuestions || 0}</div>
+                        <div className="text-3xl font-semibold">{dashboard?.pastQuestions || 0}</div>
                         <p className="text-xs text-muted-foreground">+20% from last month</p>
                     </CardContent>
                 </Card>
 
                 <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-gray-700">Total Students</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Students</CardTitle>
                         <Users className="h-5 w-5 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-semibold text-gray-900">{dashboard?.users || 0}</div>
+                        <div className="text-3xl font-semibold">{dashboard?.users || 0}</div>
                         <p className="text-xs text-muted-foreground">+15% from last month</p>
                     </CardContent>
                 </Card>
 
                 <Card className="cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 ease-in-out transform hover:scale-105">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-gray-700">App Opening</CardTitle>
+                        <CardTitle className="text-sm font-medium">App Opening</CardTitle>
                         <DollarSign className="h-5 w-5 text-primary" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-semibold text-gray-900">{dashboard?.totalOpen}</div>
+                        <div className="text-3xl font-semibold">{dashboard?.totalOpen}</div>
                         <p className="text-xs text-muted-foreground">today's analytics</p>
                     </CardContent>
                 </Card>

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/menubar";
 import { AlignJustify } from "lucide-react";
 import useAuthStore from "../../../../zustand/useAuthStore";
+import ThemeToggle from "../../../../components/template/ThemeProvider";
 
 export default function AdminDashboardLayout() {
     const navigate = useNavigate();
@@ -46,9 +47,9 @@ export default function AdminDashboardLayout() {
                 <AppSidebar isOpen={isOpen} />
 
                 {/* Main Content */}
-                <div className="flex-1 relative overflow-y-scroll noscrollbar">
+                <div className="flex-1 relative overflow-y-scroll noscrollbar bg-background text-foreground">
                     {/* Header */}
-                    <header className="sticky top-0 z-10 bg-white shadow-md px-4 sm:px-6 py-4 flex items-center justify-between">
+                    <header className="sticky top-0 z-10 bg-background border-b shadow-sm px-4 sm:px-6 py-4 flex items-center justify-between">
                         {/* Toggle Sidebar Button for Small Screens */}
                         <div className="flex items-center space-x-4">
                             <Button
@@ -69,6 +70,7 @@ export default function AdminDashboardLayout() {
 
                         {/* User Info */}
                         <div className="flex items-center space-x-4">
+                            <ThemeToggle />
                             <span className="hidden sm:block text-lg font-medium text-muted-foreground">
                                 {`${profile?.firstname} ${profile?.lastname}`}
                             </span>
@@ -114,26 +116,3 @@ export default function AdminDashboardLayout() {
     );
 }
 
-
-
-
-// import React, { useState } from "react";
-// import { Outlet } from "react-router-dom";
-// import { AppSidebar } from '../../../../components/app-sidebar'
-// import { SidebarProvider } from "@/components/ui/sidebar";
-
-
-// export default function AdminDashboardLayout() {
-//     const [isOpen, setIsOpen] = useState(false); // State for toggling sidebar (if needed)
-
-//     return (
-//         <SidebarProvider>
-//             <div className="flex w-full h-screen overflow-hidden">
-//                 <AppSidebar />
-//                 <div className="flex-1 relative overflow-y-scroll noscrollbar">
-//                     <Outlet />
-//                 </div>
-//             </div>
-//         </SidebarProvider>
-//     );
-// }

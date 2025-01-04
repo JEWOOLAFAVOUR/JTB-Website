@@ -47,11 +47,14 @@ export default function CoursePage() {
     const [editingCourse, setEditingCourse] = useState(null);
     const [courseCodes, setCourseCodes] = useState([]);
 
+    // console.log('bbbbbbbbbbbbbbbb', courses)
+
     const fetchCourses = async () => {
         try {
             const { data } = await fetchAllCourses();
-            if (data?.success) {
-                setCourses(data.data);
+            // console.log('sssssssssssss', data)
+            if (data?.success === true) {
+                setCourses(data?.data);
             } else {
                 sendToast('error', data?.message || 'Failed to fetch courses');
             }
@@ -108,10 +111,15 @@ export default function CoursePage() {
         }
     };
 
+    // console.log('bbbbbbbbbbbbb', courses)
+
     const filteredCourses = courses.filter(course =>
         course?.course_code?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course?.course_code?.code.toLowerCase().includes(searchTerm.toLowerCase())
+        course?.course_code?.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course?.code.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    console.log('/////////////////', filteredCourses)
 
     const handleNavigate = (courseId) => {
         navigate(`/admin/course/details/${courseId}`);
@@ -194,8 +202,8 @@ export default function CoursePage() {
                                     className="cursor-pointer"
                                     onClick={() => handleNavigate(course._id)}
                                 >
-                                    <TableCell>{course.course_code?.code}</TableCell>
-                                    <TableCell>{course.course_code?.name}</TableCell>
+                                    <TableCell>{course?.course_code?.code || course?.code}</TableCell>
+                                    <TableCell>{course?.course_code?.name || course?.name}</TableCell>
                                     <TableCell>
                                         {course.course_code?.level.map((level, index) => (
                                             <Badge key={index} variant="secondary" className="mr-1">
