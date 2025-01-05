@@ -35,7 +35,8 @@ import {
     BarChart,
     Loader2,
     School,
-    GraduationCap
+    GraduationCap,
+    ArrowLeft
 } from 'lucide-react';
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
