@@ -88,7 +88,7 @@ const Routes = () => {
                             element: <LessonQuestionPage />,
                         },
                         {
-                            path: "student/details",
+                            path: "student/details/:id",
                             element: <StudentDetailsPage />,
                         },
                         {

@@ -41,11 +41,32 @@ export const editProfile = async (data) => {
 };
 
 // ALL USERS 
-export const getAllUser = async (data) => {
-    const response = await makeApiRequest('GET', '/user/get-all-user', data);
+export const getAllUser = async ({ page = 1, limit = 20 } = {}) => {
+    const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString()
+    }).toString();
+
+    const response = await makeApiRequest('GET', `/user/get-all-user?${queryParams}`);
     return response;
 };
 
+
+export const searchUsers = async (query) => {
+    return await makeApiRequest('GET', `/user/search?query=${encodeURIComponent(query)}`);
+};
+
+
+export const getUserById = async (id) => {
+    const response = await makeApiRequest('GET', `/user/get-user/${id}`);
+    return response;
+};
+
+
+export const getUserRecords = async (id) => {
+    const response = await makeApiRequest('GET', `/quiz/record/?userId=${id}&history=true`);
+    return response;
+};
 
 
 export const appOpens = async () => {
