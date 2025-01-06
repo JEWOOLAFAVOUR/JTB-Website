@@ -5,5 +5,10 @@
     "module": "ESNext",
     "moduleResolution": "Node"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/components/app-sidebar.jsx"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/components/app-sidebar.jsx",
+    "src/components/ui/carousel.jsx"
+  ]
 }
