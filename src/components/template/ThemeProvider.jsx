@@ -11,7 +11,7 @@ const ThemeContext = createContext({
 // Theme Provider Component
 export function ThemeProvider({ children }) {
     const [theme, setTheme] = useState(() => {
-        const savedTheme = localStorage.getItem("ui-theme");
+        const savedTheme = localStorage.getItem("gvt-ui-theme");
         return savedTheme || "light";
     });
 

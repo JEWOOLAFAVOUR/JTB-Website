@@ -24,36 +24,6 @@ const items = [
     url: "/admin/analytics", // Matches your route path
     icon: ChartNoAxesCombined,
   },
-  {
-    title: "Courses",
-    url: "/admin/course", // Add a placeholder for Settings
-    icon: BookText,
-  },
-  {
-    title: "Past-Questions",
-    url: "/admin/past-question", // Add a placeholder for Settings
-    icon: BookText,
-  },
-  {
-    title: "Contests",
-    url: "/admin/contest", // Add a placeholder for Settings
-    icon: BookText,
-  },
-  {
-    title: "Course Code",
-    url: "/admin/coursecode", // Add a placeholder for Settings
-    icon: BookText,
-  },
-  {
-    title: "Student",
-    url: "/admin/student", // Add a placeholder for Settings
-    icon: Users,
-  },
-  {
-    title: "Transaction",
-    url: "/admin/transaction", // Add a placeholder for Settings
-    icon: HandCoins,
-  },
 ];
 
 export function AppSidebar() {
