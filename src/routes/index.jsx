@@ -10,6 +10,8 @@ import AboutPage from '../screen/Auth/AboutPage';
 import ContactPage from '../screen/Auth/ContactPage';
 import GetESticker from '../screen/Auth/GetESticker';
 import IndividualPurchase from '../screen/Auth/IndividualPurchase';
+import CustomerDetails from '../screen/Admin/CustomerDetails';
+import EditCustomer from '../screen/Admin/EditCustomer';
 
 // ScrollToTop component integrated within Routes
 const ScrollToTop = () => {
@@ -70,6 +72,14 @@ const Routes = () => {
                 {
                     path: "customers",
                     element: <Customers />,
+                },
+                {
+                    path: "customers/:id",
+                    element: <CustomerDetails />,
+                },
+                {
+                    path: "customers/edit/:id",
+                    element: <EditCustomer />,
                 },
                 {
                     path: "customers/add",

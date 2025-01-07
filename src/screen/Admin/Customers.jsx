@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Eye } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -94,6 +94,7 @@ const Customers = () => {
                       size="sm"
                       onClick={() => navigate(`/admin/customers/${customer.id}`)}
                     >
+                      <Eye className="mr-2" size={16} />
                       View
                     </Button>
                   </TableCell>
