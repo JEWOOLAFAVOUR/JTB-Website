@@ -90,10 +90,9 @@ const Customers = () => {
                 <tr className="border-b">
                   <th className="px-4 py-2 text-left">S/N</th>
                   <th className="px-4 py-2 text-left">Name</th>
-                  <th className="px-4 py-2 text-left">Email</th>
                   <th className="px-4 py-2 text-left">Phone</th>
+                  <th className="px-4 py-2 text-left">Serial Number</th>
                   <th className="px-4 py-2 text-left">Vehicle Number</th>
-                  <th className="px-4 py-2 text-left">State</th>
                   <th className="px-4 py-2 text-left">Actions</th>
                 </tr>
               </thead>
@@ -102,10 +101,9 @@ const Customers = () => {
                   <tr key={customer.id} className="border-b">
                     <td className="px-4 py-2">{(page - 1) * pageSize + index + 1}</td>
                     <td className="px-4 py-2">{customer.full_name}</td>
-                    <td className="px-4 py-2">{customer.email}</td>
                     <td className="px-4 py-2">{customer.phone_number}</td>
+                    <td className="px-4 py-2">{customer.serial_number}</td>
                     <td className="px-4 py-2">{customer.vehicle_number}</td>
-                    <td className="px-4 py-2">{customer.state}</td>
                     <td className="px-4 py-2">
                       <Button
                         variant="ghost"

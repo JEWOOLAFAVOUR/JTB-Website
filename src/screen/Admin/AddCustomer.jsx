@@ -57,8 +57,12 @@ const AddCustomer = () => {
             navigate('/admin/customers');
 
         } catch (error) {
-            sendToast('error', error?.message)
-            console.error("Error during customer:", error);
+            if (error?.code == 23505) {
+                sendToast('error', 'Serial number already exists')
+            } else {
+                sendToast('error', error?.message)
+
+            }
         } finally {
             setIsLoading(false);
         }
