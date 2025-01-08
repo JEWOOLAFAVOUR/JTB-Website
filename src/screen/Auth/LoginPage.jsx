@@ -4,15 +4,25 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { loginUser } from '../../api/auth';
 
 const LoginPage = () => {
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add your authentication logic here
-        navigate('/admin/dashboard');
+        try {
+            // Ensure correct email and password are passed
+            let email = "jewoolafavour2020@gmail.com"
+            password: 'sjsjjs'
+            let b = await loginUser(email, password);
+            console.log({ b })
+            // navigate('/admin/dashboard'); // Redirect after successful login
+        } catch (error) {
+            console.error("Error during login:", error);
+        }
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">

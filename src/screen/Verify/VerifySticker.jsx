@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useStore } from '../../store/useStore'
+import image1 from '../../assets/image1.jpg';
+
 
 export default function VerifySticker() {
     const navigate = useNavigate()
@@ -50,7 +52,7 @@ export default function VerifySticker() {
         <div className="min-h-screen bg-gray-50">
             <div className="relative h-[300px] bg-gray-900">
                 <img
-                    src="/placeholder.svg?height=300&width=800"
+                    src={image1}
                     alt="Traffic"
                     className="w-full h-full object-cover opacity-50"
                 />

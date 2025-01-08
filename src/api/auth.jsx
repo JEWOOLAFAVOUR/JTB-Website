@@ -1,25 +1,11 @@
-import client from "./client";
+import { account } from "./client"; // assuming client is set up correctly
 
-const makeApiRequest = async (method, endpoint, data) => {
+export const loginUser = async (email, password) => {
     try {
-        const response = await client.request({
-            method,
-            url: endpoint,
-            data // add the data parameter to the request options
-        });
-        return { data: response.data, status: response.status };
+        // This should work if you provide the correct email and password
+        const session = await account.createSession(email, password);
+        console.log("User logged in:", session);
     } catch (error) {
-        const { response } = error;
-        if (response?.data) {
-            return { data: response.data, status: response.status };
-        }
-        return { error: error.message || error };
+        console.error("Error logging in:", error);
     }
 };
-
-
-export const loginUser = async (data) => {
-    const response = await makeApiRequest('POST', '/user/login-user', data);
-    return response;
-};
-
