@@ -11,6 +11,8 @@ export default function VerifySuccess() {
     const navigate = useNavigate()
     const { customer } = useStore()
 
+    console.log({ customer })
+
     React.useEffect(() => {
         if (!customer) {
             navigate('/verify')
@@ -46,20 +48,20 @@ export default function VerifySuccess() {
                         <div className="border-t border-b py-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
+                                    <p className="text-sm text-gray-600">Full Name</p>
+                                    <p className="font-semibold">{customer?.full_name}</p>
+                                </div>
+                                <div>
                                     <p className="text-sm text-gray-600">Vehicle License</p>
-                                    <p className="font-semibold">{customer.vehicleLicense}</p>
+                                    <p className="font-semibold">{customer?.vehicle_number}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Sticker Number</p>
-                                    <p className="font-semibold">{customer.serialNumber}</p>
+                                    <p className="font-semibold">{customer?.serial_number}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-600">Vehicle Type</p>
-                                    <p className="font-semibold">{customer.vehicleType}</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">Full Name</p>
-                                    <p className="font-semibold">{customer.fullName}</p>
+                                    <p className="font-semibold">{customer?.vehicle_type}</p>
                                 </div>
                             </div>
                         </div>

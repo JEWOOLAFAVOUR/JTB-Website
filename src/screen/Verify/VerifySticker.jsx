@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useStore } from '../../store/useStore'
 import image1 from '../../assets/image1.jpg';
+import { verifySticker } from '../../api/auth'
 
 
 export default function VerifySticker() {
@@ -15,38 +16,24 @@ export default function VerifySticker() {
     const [serialNumber, setSerialNumber] = React.useState('')
     const [verificationCode, setVerificationCode] = React.useState('')
 
+
     const handleVerify = async (e) => {
-        e.preventDefault()
-        setLoading(true)
+        e.preventDefault();
+        setLoading(true);
 
         try {
-            // Simulate API call
-            const response = await new Promise((resolve) => {
-                setTimeout(() => {
-                    if (serialNumber === 'JTB/2025/ZAMFARA/790734' && verificationCode === '454062') {
-                        resolve({
-                            id: '1',
-                            serialNumber: 'JTB/2025/ZAMFARA/790734',
-                            vehicleLicense: 'JJJ356YE',
-                            vehicleType: 'Cars and its equivalent',
-                            fullName: 'John Doe',
-                            stickerNumber: '454062'
-                        })
-                    } else {
-                        throw new Error('Invalid serial number or verification code')
-                    }
-                }, 1000)
-            })
-
-            setCustomer(response)
-            navigate('/verify/success')
-        } catch (error) {
-            setError(error.message)
-            navigate('/verify/error')
+            console.log({ serialNumber })
+            const stickerData = await verifySticker(serialNumber); // Call the API function
+            console.log({ stickerData })
+            setCustomer(stickerData); // Save sticker data in state
+            navigate(`/verify/success`); // Navigate to success page
+        } catch (err) {
+            setError('Invalid serial number. Please try again.');
+            navigate('/verify/error'); // Navigate to error page
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -85,18 +72,9 @@ export default function VerifySticker() {
                     <form onSubmit={handleVerify} className="space-y-4">
                         <div>
                             <Input
-                                placeholder="Enter JTB Number"
+                                placeholder="Enter Serial Number"
                                 value={serialNumber}
                                 onChange={(e) => setSerialNumber(e.target.value)}
-                                required
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <Input
-                                placeholder="Enter Verification Code"
-                                value={verificationCode}
-                                onChange={(e) => setVerificationCode(e.target.value)}
                                 required
                                 className="w-full"
                             />

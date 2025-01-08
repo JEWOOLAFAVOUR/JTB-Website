@@ -168,3 +168,21 @@ const checkSerialNumberExists = async (serialNumber) => {
         throw error;
     }
 };
+
+
+// stickers 
+
+export const verifySticker = async (serialNumber) => {
+    const { data, error } = await supabase
+        .from('Customers') // Replace with your actual table name
+        .select('*')
+        .eq('serial_number', serialNumber)
+        .single(); // Ensure only one record is fetched
+
+    if (error) {
+        console.error('Error verifying sticker:', error.message);
+        throw error;
+    }
+
+    return data;
+};
