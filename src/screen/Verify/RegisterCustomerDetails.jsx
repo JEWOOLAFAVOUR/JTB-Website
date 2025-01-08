@@ -24,7 +24,7 @@ export default function RegisterCustomerDetails() {
 
     React.useEffect(() => {
         if (!user) {
-            navigate('/login-for-registration')
+            navigate('/verify')
         }
     }, [user, navigate])
 
@@ -67,31 +67,36 @@ export default function RegisterCustomerDetails() {
     };
 
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
 
-        try {
+        const { clearUser } = useStore.getState();
 
-            console.log(formData)
+        try {
+            console.log(formData);
 
             const response = await addCustomer(formData);
-            console.log("customer response:", response);
-            sendToast('success', 'Customer added successful')
-            navigate('/verify');
+            console.log("Customer response:", response);
 
+            sendToast('success', 'Customer added successfully');
+
+            console.log("Clearing user...");
+            clearUser(); // This clears the user
+            console.log("User after clear:", useStore.getState().user);
+
+            navigate('/verify');
         } catch (error) {
             if (error?.code == 23505) {
-                sendToast('error', 'Serial number already exists')
+                sendToast('error', 'Serial number already exists');
             } else {
-                sendToast('error', error?.message)
-
+                sendToast('error', error?.message);
             }
         } finally {
             setIsLoading(false);
         }
     };
+
 
 
     if (!user) return null

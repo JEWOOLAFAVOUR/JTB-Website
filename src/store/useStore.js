@@ -11,5 +11,6 @@ export const useStore = create((set) => ({
     setToken: (token) => set({ token }),
     setLoading: (loading) => set({ isLoading: loading }),
     setError: (error) => set({ error, customer: null }),
+    clearUser: () => set({ user: null }),
     clearStore: () => set({ customer: null, user: null, error: null, isLoading: false, token: null }),
 }))
