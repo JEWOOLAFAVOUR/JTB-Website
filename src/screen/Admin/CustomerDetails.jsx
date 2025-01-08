@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { sendToast } from '../../components/utilis';
-// import { toast } from "@/components/ui/use-toast";
+import { getCustomerById, deleteCustomer } from '../../api/auth';
 
 const CustomerDetails = () => {
     const { id } = useParams();
@@ -19,24 +19,8 @@ const CustomerDetails = () => {
         const fetchCustomer = async () => {
             setLoading(true);
             try {
-                // Simulating API call delay
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                // Mock customer data
-                const mockCustomer = {
-                    id: id,
-                    name: 'John Doe',
-                    email: 'john@example.com',
-                    phone: '+234 123 456 7890',
-                    address: '123 Main St, Lagos, Nigeria',
-                    tinNumber: 'TIN12345678',
-                    vehicleLicensePlate: 'ABC123XY',
-                    vehicleType: 'Sedan',
-                    numberOfTyres: 4,
-                    state: 'Lagos',
-                    lgaOfOrigin: 'Ikeja',
-                    registrationDate: '2023-01-15'
-                };
-                setCustomer(mockCustomer);
+                const customerData = await getCustomerById(id);
+                setCustomer(customerData);
             } catch (error) {
                 console.error('Error fetching customer:', error);
                 sendToast('error', "Failed to load customer details. Please try again.")
@@ -56,8 +40,7 @@ const CustomerDetails = () => {
         setIsDeleteModalOpen(false);
         setLoading(true);
         try {
-            // Simulating API call delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await deleteCustomer(id);
             sendToast('success', "Customer deleted successfully.")
             navigate('/admin/customers');
         } catch (error) {
@@ -122,7 +105,7 @@ const CustomerDetails = () => {
                     <CardHeader className="bg-green-600 text-white">
                         <CardTitle className="text-2xl flex items-center">
                             <User className="mr-2" size={24} />
-                            {customer.name}
+                            {customer.full_name}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-6">
@@ -131,20 +114,20 @@ const CustomerDetails = () => {
                                 <h3 className="text-lg font-semibold mb-4 border-b pb-2">Personal Information</h3>
                                 <div className="space-y-3">
                                     <p className="flex items-center"><Mail className="mr-2" size={18} /> {customer.email}</p>
-                                    <p className="flex items-center"><Phone className="mr-2" size={18} /> {customer.phone}</p>
+                                    <p className="flex items-center"><Phone className="mr-2" size={18} /> {customer.phone_number}</p>
                                     <p className="flex items-center"><MapPin className="mr-2" size={18} /> {customer.address}</p>
-                                    <p className="flex items-center"><FileText className="mr-2" size={18} /> TIN: {customer.tinNumber}</p>
+                                    <p className="flex items-center"><FileText className="mr-2" size={18} /> TIN: {customer.tin_number}</p>
                                     <p className="flex items-center"><MapPin className="mr-2" size={18} /> State: {customer.state}</p>
-                                    <p className="flex items-center"><MapPin className="mr-2" size={18} /> LGA: {customer.lgaOfOrigin}</p>
+                                    <p className="flex items-center"><MapPin className="mr-2" size={18} /> LGA: {customer.lga_of_origin}</p>
                                 </div>
                             </div>
                             <div>
                                 <h3 className="text-lg font-semibold mb-4 border-b pb-2">Vehicle Information</h3>
                                 <div className="space-y-3">
-                                    <p className="flex items-center"><Car className="mr-2" size={18} /> License Plate: {customer.vehicleLicensePlate}</p>
-                                    <p className="flex items-center"><Car className="mr-2" size={18} /> Vehicle Type: {customer.vehicleType}</p>
-                                    <p className="flex items-center"><Car className="mr-2" size={18} /> Number of Tyres: {customer.numberOfTyres}</p>
-                                    <p className="flex items-center"><Calendar className="mr-2" size={18} /> Registered: {customer.registrationDate}</p>
+                                    <p className="flex items-center"><Car className="mr-2" size={18} /> License Plate: {customer.vehicle_number}</p>
+                                    <p className="flex items-center"><Car className="mr-2" size={18} /> Vehicle Type: {customer.vehicle_type}</p>
+                                    <p className="flex items-center"><Car className="mr-2" size={18} /> Number of Tyres: {customer.number_of_tyres}</p>
+                                    <p className="flex items-center"><Calendar className="mr-2" size={18} /> Registered: {new Date(customer.created_at).toLocaleDateString()}</p>
                                 </div>
                             </div>
                         </div>
@@ -180,4 +163,3 @@ const CustomerDetails = () => {
 };
 
 export default CustomerDetails;
-

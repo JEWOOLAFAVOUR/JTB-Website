@@ -4,14 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Eye } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { getCustomers } from '../../api/auth';
 
 const Customers = () => {
@@ -19,6 +11,7 @@ const Customers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [customers, setCustomers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1); // Current page
   const pageSize = 30; // Number of items per page
 
@@ -26,8 +19,9 @@ const Customers = () => {
     const fetchCustomers = async () => {
       try {
         setIsLoading(true);
-        const customerData = await getCustomers(page, pageSize); // Pass pagination parameters
-        setCustomers(customerData);
+        const response = await getCustomers(page, pageSize);
+        setCustomers(response.data);
+        setTotalCount(response.count);
       } catch (error) {
         console.error('Error fetching customers:', error);
       } finally {
@@ -36,7 +30,10 @@ const Customers = () => {
     };
 
     fetchCustomers();
-  }, [page]); // Re-fetch data when the page changes
+  }, [page]);
+
+  const totalPages = Math.ceil(totalCount / pageSize);
+  const hasNextPage = page < totalPages;
 
   const filteredCustomers = customers.filter((customer) =>
     customer.full_name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -45,6 +42,7 @@ const Customers = () => {
   return (
     <div className="p-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
+        {/* Page Title */}
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -53,20 +51,21 @@ const Customers = () => {
           Customers
         </motion.h1>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative">
+        {/* Search and Add Button */}
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
             <Input
               type="search"
               placeholder="Search customers..."
-              className="pl-10"
+              className="pl-10 w-full"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <Button
             onClick={() => navigate('/admin/customers/add')}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-green-600 hover:bg-green-700 flex-shrink-0"
           >
             <Plus className="mr-2" size={20} />
             Add Customer
@@ -74,6 +73,7 @@ const Customers = () => {
         </div>
       </div>
 
+      {/* Customers Table */}
       {isLoading ? (
         <p>Loading customers...</p>
       ) : (
@@ -81,31 +81,32 @@ const Customers = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-lg shadow"
+          className="bg-white border border-red-500 w-full rounded-lg shadow"
         >
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>S/N</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Vehicle Number</TableHead>
-                  <TableHead>State</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+          {/* Make the table horizontally scrollable */}
+          <div className="overflow-x-auto w-full">
+            <table className="min-w-full w-full table-auto">
+              <thead>
+                <tr className="border-b">
+                  <th className="px-4 py-2 text-left">S/N</th>
+                  <th className="px-4 py-2 text-left">Name</th>
+                  <th className="px-4 py-2 text-left">Email</th>
+                  <th className="px-4 py-2 text-left">Phone</th>
+                  <th className="px-4 py-2 text-left">Vehicle Number</th>
+                  <th className="px-4 py-2 text-left">State</th>
+                  <th className="px-4 py-2 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
                 {filteredCustomers.map((customer, index) => (
-                  <TableRow key={customer.id}>
-                    <TableCell>{(page - 1) * pageSize + index + 1}</TableCell>
-                    <TableCell>{customer.full_name}</TableCell>
-                    <TableCell>{customer.email}</TableCell>
-                    <TableCell>{customer.phone_number}</TableCell>
-                    <TableCell>{customer.vehicle_number}</TableCell>
-                    <TableCell>{customer.state}</TableCell>
-                    <TableCell>
+                  <tr key={customer.id} className="border-b">
+                    <td className="px-4 py-2">{(page - 1) * pageSize + index + 1}</td>
+                    <td className="px-4 py-2">{customer.full_name}</td>
+                    <td className="px-4 py-2">{customer.email}</td>
+                    <td className="px-4 py-2">{customer.phone_number}</td>
+                    <td className="px-4 py-2">{customer.vehicle_number}</td>
+                    <td className="px-4 py-2">{customer.state}</td>
+                    <td className="px-4 py-2">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -114,24 +115,28 @@ const Customers = () => {
                         <Eye className="mr-2" size={16} />
                         View
                       </Button>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
           </div>
         </motion.div>
       )}
 
-      <div className="flex justify-between mt-4">
+      {/* Pagination */}
+      <div className="flex flex-col md:flex-row justify-between items-center mt-4 space-y-4 md:space-y-0">
         <Button
           disabled={page === 1}
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
         >
           Previous
         </Button>
-        <p>Page {page}</p>
+        <div className="text-sm text-gray-600">
+          Page {page} of {totalPages} ({totalCount} total records)
+        </div>
         <Button
+          disabled={!hasNextPage}
           onClick={() => setPage((prev) => prev + 1)}
         >
           Next
@@ -142,4 +147,3 @@ const Customers = () => {
 };
 
 export default Customers;
-

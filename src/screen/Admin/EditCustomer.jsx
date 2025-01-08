@@ -8,37 +8,45 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { sendToast } from '../../components/utilis';
+import { getCustomerById, updateCustomer } from '../../api/auth';
 
 const EditCustomer = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [customer, setCustomer] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        tinNumber: '',
+        vehicleLicensePlate: '',
+        vehicleType: '',
+        numberOfTyres: '',
+        state: '',
+        lgaOfOrigin: ''
+    });
 
     useEffect(() => {
         const fetchCustomer = async () => {
             setLoading(true);
             try {
-                // Simulating API call delay
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                // Mock customer data
-                const mockCustomer = {
-                    id: id,
-                    name: 'John Doe',
-                    email: 'john@example.com',
-                    phone: '+234 123 456 7890',
-                    address: '123 Main St, Lagos, Nigeria',
-                    tinNumber: 'TIN12345678',
-                    vehicleLicensePlate: 'ABC123XY',
-                    vehicleType: 'Sedan',
-                    numberOfTyres: 4,
-                    state: 'Lagos',
-                    lgaOfOrigin: 'Ikeja',
-                };
-                setCustomer(mockCustomer);
+                const customerData = await getCustomerById(id);
+                setFormData({
+                    name: customerData.full_name,
+                    email: customerData.email,
+                    phone: customerData.phone_number,
+                    address: customerData.address,
+                    tinNumber: customerData.tin_number,
+                    vehicleLicensePlate: customerData.vehicle_number,
+                    vehicleType: customerData.vehicle_type,
+                    numberOfTyres: customerData.number_of_tyres,
+                    state: customerData.state,
+                    lgaOfOrigin: customerData.lga_of_origin
+                });
             } catch (error) {
                 console.error('Error fetching customer:', error);
-                sendToast('error', "Failed to load customer details. Please try again.")
+                sendToast('error', "Failed to load customer details. Please try again.");
             } finally {
                 setLoading(false);
             }
@@ -47,17 +55,31 @@ const EditCustomer = () => {
         fetchCustomer();
     }, [id]);
 
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [id]: value
+        }));
+    };
+
+    const handleSelectChange = (value, field) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            // Simulating API call delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            sendToast('success', "Customer updated successfully.")
+            await updateCustomer(id, formData);
+            sendToast('success', "Customer updated successfully.");
             navigate(`/admin/customers/${id}`);
         } catch (error) {
             console.error('Error updating customer:', error);
-            sendToast('error', "Failed to update customer. Please try again.")
+            sendToast('error', "Failed to update customer. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -71,7 +93,7 @@ const EditCustomer = () => {
         );
     }
 
-    if (!customer) {
+    if (!formData) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <div className="text-center">
@@ -114,7 +136,8 @@ const EditCustomer = () => {
                                     <Label htmlFor="name">Full Name</Label>
                                     <Input
                                         id="name"
-                                        defaultValue={customer.name}
+                                        value={formData.name}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
@@ -123,7 +146,8 @@ const EditCustomer = () => {
                                     <Input
                                         id="email"
                                         type="email"
-                                        defaultValue={customer.email}
+                                        value={formData.email}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
@@ -131,7 +155,8 @@ const EditCustomer = () => {
                                     <Label htmlFor="phone">Phone Number</Label>
                                     <Input
                                         id="phone"
-                                        defaultValue={customer.phone}
+                                        value={formData.phone}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
@@ -139,7 +164,8 @@ const EditCustomer = () => {
                                     <Label htmlFor="address">Address</Label>
                                     <Input
                                         id="address"
-                                        defaultValue={customer.address}
+                                        value={formData.address}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
@@ -147,20 +173,25 @@ const EditCustomer = () => {
                                     <Label htmlFor="tinNumber">TIN Number</Label>
                                     <Input
                                         id="tinNumber"
-                                        defaultValue={customer.tinNumber}
+                                        value={formData.tinNumber}
+                                        onChange={handleChange}
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="vehicleLicensePlate">Vehicle License Plate</Label>
                                     <Input
                                         id="vehicleLicensePlate"
-                                        defaultValue={customer.vehicleLicensePlate}
+                                        value={formData.vehicleLicensePlate}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="vehicleType">Vehicle Type</Label>
-                                    <Select defaultValue={customer.vehicleType}>
+                                    <Select
+                                        value={formData.vehicleType}
+                                        onValueChange={(value) => handleSelectChange(value, 'vehicleType')}
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select vehicle type" />
                                         </SelectTrigger>
@@ -177,13 +208,17 @@ const EditCustomer = () => {
                                     <Input
                                         id="numberOfTyres"
                                         type="number"
-                                        defaultValue={customer.numberOfTyres}
+                                        value={formData.numberOfTyres}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="state">State</Label>
-                                    <Select defaultValue={customer.state}>
+                                    <Select
+                                        value={formData.state}
+                                        onValueChange={(value) => handleSelectChange(value, 'state')}
+                                    >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select state" />
                                         </SelectTrigger>
@@ -199,7 +234,8 @@ const EditCustomer = () => {
                                     <Label htmlFor="lgaOfOrigin">LGA of Origin</Label>
                                     <Input
                                         id="lgaOfOrigin"
-                                        defaultValue={customer.lgaOfOrigin}
+                                        value={formData.lgaOfOrigin}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </div>
@@ -212,8 +248,12 @@ const EditCustomer = () => {
                                 >
                                     Cancel
                                 </Button>
-                                <Button type="submit" className="bg-green-600 hover:bg-green-700">
-                                    Save Changes
+                                <Button
+                                    type="submit"
+                                    className="bg-green-600 hover:bg-green-700"
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Saving...' : 'Save Changes'}
                                 </Button>
                             </div>
                         </form>
@@ -225,4 +265,3 @@ const EditCustomer = () => {
 };
 
 export default EditCustomer;
-

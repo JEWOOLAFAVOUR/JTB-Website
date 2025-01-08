@@ -61,13 +61,73 @@ export const addCustomer = async (customerData) => {
 
 // Fetch customers
 export const getCustomers = async (page, pageSize) => {
-    const { data, error } = await supabase
+    // Get the data with count
+    const { data, error, count } = await supabase
         .from('Customers')
-        .select('*') // Adjust columns if needed
-        .range((page - 1) * pageSize, page * pageSize - 1); // Fetch records for the page
+        .select('*', { count: 'exact' })
+        .range((page - 1) * pageSize, page * pageSize - 1);
 
     if (error) {
         console.error('Error fetching customers:', error.message);
+        throw error;
+    }
+
+    return {
+        data,
+        count
+    };
+};
+
+
+// Get single customer by ID
+export const getCustomerById = async (customerId) => {
+    const { data, error } = await supabase
+        .from('Customers')
+        .select('*')
+        .eq('id', customerId)
+        .single();
+
+    if (error) {
+        console.error('Error fetching customer:', error.message);
+        throw error;
+    }
+    return data;
+};
+
+// Update customer
+export const updateCustomer = async (customerId, customerData) => {
+    const { data, error } = await supabase
+        .from('Customers')
+        .update({
+            full_name: customerData.name,
+            email: customerData.email,
+            phone_number: customerData.phone,
+            address: customerData.address,
+            tin_number: customerData.tinNumber,
+            vehicle_number: customerData.vehicleLicensePlate,
+            vehicle_type: customerData.vehicleType,
+            number_of_tyres: customerData.numberOfTyres,
+            state: customerData.state,
+            lga_of_origin: customerData.lgaOfOrigin
+        })
+        .eq('id', customerId);
+
+    if (error) {
+        console.error('Error updating customer:', error.message);
+        throw error;
+    }
+    return data;
+};
+
+// Delete customer
+export const deleteCustomer = async (customerId) => {
+    const { data, error } = await supabase
+        .from('Customers')
+        .delete()
+        .eq('id', customerId);
+
+    if (error) {
+        console.error('Error deleting customer:', error.message);
         throw error;
     }
     return data;

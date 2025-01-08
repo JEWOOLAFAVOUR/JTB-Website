@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, TrendingUp, Car } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import AdminHeader from '../../components/admin/AdminHeader';
 
 const Dashboard = () => {
     const stats = [
@@ -29,7 +30,8 @@ const Dashboard = () => {
     ];
 
     return (
-        <div className="p-6">
+        <div className="p-4">
+            {/* <AdminHeader /> */}
             <motion.h1
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -56,8 +58,8 @@ const Dashboard = () => {
                             <CardContent>
                                 <div className="text-2xl font-bold">{stat.value}</div>
                                 <div className={`text-xs ${stat.changeType === 'positive'
-                                        ? 'text-green-600'
-                                        : 'text-red-600'
+                                    ? 'text-green-600'
+                                    : 'text-red-600'
                                     }`}>
                                     {stat.change} from last month
                                 </div>
