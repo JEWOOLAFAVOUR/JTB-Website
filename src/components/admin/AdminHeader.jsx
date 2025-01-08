@@ -1,35 +1,79 @@
-import React from 'react';
-import { Menu, Bell, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, LogOut, User, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useNavigate } from 'react-router-dom';
+import { logoutUser } from '../../api/auth';
 
 const AdminHeader = ({ onMenuToggle, title }) => {
+    const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
     return (
-        <header className="w-full bg-white shadow-md px-4 py-3 flex justify-between items-center mb-4">
-            {/* Hamburger Menu */}
-            <Button
-                variant="ghost"
-                className="md:hidden"
-                onClick={onMenuToggle}
-            >
-                <Menu size={24} />
-            </Button>
+        <header className="fixed top-0 right-0 left-0 md:left-64 bg-white shadow-md z-30 transition-all duration-300">
+            <div className="px-4 py-3 flex justify-between items-center">
+                {/* Hamburger Menu */}
+                <div className="flex items-center gap-4">
+                    <Button
+                        variant="ghost"
+                        className="md:hidden"
+                        onClick={() => onMenuToggle(prev => !prev)}
+                    >
+                        <Menu size={24} />
+                    </Button>
 
-            {/* Page Title */}
-            <h1 className="text-xl font-semibold text-gray-700">{title}</h1>
+                    {/* Page Title */}
+                    <h1 className="text-xl font-semibold text-gray-700">{title}</h1>
+                </div>
 
-            {/* Action Icons */}
-            <div className="flex items-center space-x-4">
-                {/* Notification Icon */}
-                <Button variant="ghost" className="relative">
-                    <Bell size={24} />
-                    {/* Notification Badge */}
-                    <span className="absolute top-0 right-0 h-2 w-2 bg-red-600 rounded-full"></span>
-                </Button>
-
-                {/* User Profile Icon */}
-                <Button variant="ghost">
-                    <User size={24} />
-                </Button>
+                {/* User Dropdown */}
+                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            className="h-10 w-10 rounded-full"
+                            onClick={() => setIsOpen(true)}
+                        >
+                            <User size={24} />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end">
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {/* <DropdownMenuItem className="cursor-pointer">
+                            <User className="mr-2 h-4 w-4" />
+                            <span>Profile</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator /> */}
+                        <DropdownMenuItem
+                            className="cursor-pointer text-red-600 focus:text-red-600"
+                            onClick={handleLogout}
+                        >
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Logout</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </header>
     );
