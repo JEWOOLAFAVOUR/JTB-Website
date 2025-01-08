@@ -58,3 +58,17 @@ export const addCustomer = async (customerData) => {
     }
     return data;
 };
+
+// Fetch customers
+export const getCustomers = async (page, pageSize) => {
+    const { data, error } = await supabase
+        .from('Customers')
+        .select('*') // Adjust columns if needed
+        .range((page - 1) * pageSize, page * pageSize - 1); // Fetch records for the page
+
+    if (error) {
+        console.error('Error fetching customers:', error.message);
+        throw error;
+    }
+    return data;
+};

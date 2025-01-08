@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Eye } from 'lucide-react';
@@ -12,23 +12,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getCustomers } from '../../api/auth';
 
 const Customers = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [customers, setCustomers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1); // Current page
+  const pageSize = 30; // Number of items per page
 
-  // Sample data - replace with your actual data
-  const customers = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
-      phone: '+234 123 456 7890',
-      vehicleNumber: 'ABC123XY',
-      state: 'Lagos',
-    },
-    // Add more customer data here
-  ];
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        setIsLoading(true);
+        const customerData = await getCustomers(page, pageSize); // Pass pagination parameters
+        setCustomers(customerData);
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, [page]); // Re-fetch data when the page changes
+
+  const filteredCustomers = customers.filter((customer) =>
+    customer.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="p-6">
@@ -62,48 +74,69 @@ const Customers = () => {
         </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-white rounded-lg shadow"
-      >
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Vehicle Number</TableHead>
-                <TableHead>State</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {customers.map((customer) => (
-                <TableRow key={customer.id}>
-                  <TableCell>{customer.name}</TableCell>
-                  <TableCell>{customer.email}</TableCell>
-                  <TableCell>{customer.phone}</TableCell>
-                  <TableCell>{customer.vehicleNumber}</TableCell>
-                  <TableCell>{customer.state}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => navigate(`/admin/customers/${customer.id}`)}
-                    >
-                      <Eye className="mr-2" size={16} />
-                      View
-                    </Button>
-                  </TableCell>
+      {isLoading ? (
+        <p>Loading customers...</p>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white rounded-lg shadow"
+        >
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>S/N</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead>Vehicle Number</TableHead>
+                  <TableHead>State</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </motion.div>
+              </TableHeader>
+              <TableBody>
+                {filteredCustomers.map((customer, index) => (
+                  <TableRow key={customer.id}>
+                    <TableCell>{(page - 1) * pageSize + index + 1}</TableCell>
+                    <TableCell>{customer.full_name}</TableCell>
+                    <TableCell>{customer.email}</TableCell>
+                    <TableCell>{customer.phone_number}</TableCell>
+                    <TableCell>{customer.vehicle_number}</TableCell>
+                    <TableCell>{customer.state}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(`/admin/customers/${customer.id}`)}
+                      >
+                        <Eye className="mr-2" size={16} />
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </motion.div>
+      )}
+
+      <div className="flex justify-between mt-4">
+        <Button
+          disabled={page === 1}
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+        >
+          Previous
+        </Button>
+        <p>Page {page}</p>
+        <Button
+          onClick={() => setPage((prev) => prev + 1)}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };
