@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { loginUser, logoutUser } from '../../api/auth';
 import { sendToast } from '../../components/utilis';
+import { useStore } from '../../store/useStore';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -26,8 +27,9 @@ const LoginPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
         setIsLoading(true);
+
+        const { setLoading, setToken } = useStore.getState();
 
         try {
             console.log('Form data:', formData);
@@ -35,16 +37,16 @@ const LoginPage = () => {
 
             // Attempt login
             const response = await loginUser(formData.email, formData.password);
-            console.log("Login response:", response?.session?.access_token);
-            sendToast('success', 'Login successful')
 
             if (response) {
+                const accessToken = response?.session?.access_token;
+                setToken(accessToken); // Save token to Zustand store
+                sendToast('success', 'Login successful');
                 navigate('/admin/dashboard');
             }
         } catch (error) {
             sendToast('error', error?.message)
             console.error("Error during login:", error);
-            setError('Login failed. Please check your credentials or session.');
         } finally {
             setIsLoading(false);
         }

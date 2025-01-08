@@ -1,15 +1,15 @@
 import React from 'react'
 import { Navigate, Outlet } from "react-router-dom";
-import useAuthStore from '../zustand/useAuthStore';
+import { useStore } from '../store/useStore';
 
 export default function ProtectedRoute() {
     // const isAuthenticated = true; // Replace this with real authentication logic
 
-    const { token } = useAuthStore.getState()
+    const { token } = useStore.getState()
 
 
     if (!token) {
-        return <Navigate to="/login" />;
+        return <Navigate to="/login" replace />;
     }
 
     return <Outlet />;

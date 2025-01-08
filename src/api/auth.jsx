@@ -1,3 +1,5 @@
+import { sendToast } from '../components/utilis';
+import { useStore } from '../store/useStore';
 import { supabase } from './client';
 
 
@@ -18,14 +20,20 @@ export const loginUser = async (email, password) => {
 };
 
 export const logoutUser = async () => {
+    const { clearStore } = useStore.getState();
+
     try {
-        const { error } = await supabase.auth.signOut()
-        if (error) throw error
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+
+        clearStore(); // Clear token and other state from Zustand store
+        sendToast('success', 'Logged out successfully');
     } catch (error) {
-        console.error('Error logging out:', error.message)
-        throw error
+        console.error('Error logging out:', error.message);
+        sendToast('error', 'Logout failed.');
+        throw error;
     }
-}
+};
 
 export const getCurrentUser = async () => {
     try {

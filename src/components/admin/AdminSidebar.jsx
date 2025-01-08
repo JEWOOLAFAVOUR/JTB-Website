@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, LayoutDashboard, Users, LogOut, Menu } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { logoutUser } from '../../api/auth';
 
 const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
-    // const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const navigate = useNavigate();
     const location = useLocation();
 
     const menuItems = [
@@ -26,8 +27,9 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
         setIsCollapsed(!isCollapsed);
     };
 
-    const toggleMobile = () => {
-        setIsMobileOpen(!isMobileOpen);
+    const handleSignOut = async () => {
+        await logoutUser();
+        navigate('/login');
     };
 
     const NavItem = ({ item }) => {
@@ -124,9 +126,7 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                         <Button
                             variant="ghost"
                             className="w-full flex items-center justify-center space-x-2 text-red-600 hover:text-red-700"
-                            onClick={() => {
-                                // Add logout logic here
-                            }}
+                            onClick={() => handleSignOut()}
                         >
                             <LogOut size={20} />
                             {!isCollapsed && (

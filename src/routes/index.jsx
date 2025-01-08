@@ -17,6 +17,7 @@ import VerifySticker from '../screen/Verify/VerifySticker';
 import VerifySuccess from '../screen/Verify/VerifySuccess';
 import VerifyError from '../screen/Verify/VerifyError';
 import RegisterCustomerDetails from '../screen/Verify/RegisterCustomerDetails';
+import ProtectedRoute from './protectedRoute';
 
 const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -86,28 +87,33 @@ const Routes = () => {
     const adminRoutes = [
         {
             path: "admin",
-            element: <AdminLayout />,
+            element: <ProtectedRoute />,
             children: [
                 {
-                    path: "dashboard",
-                    element: <Dashboard />,
-                },
-                {
-                    path: "customers",
-                    element: <Customers />,
-                },
-                {
-                    path: "customers/:id",
-                    element: <CustomerDetails />,
-                },
-                {
-                    path: "customers/edit/:id",
-                    element: <EditCustomer />,
-                },
-                {
-                    path: "customers/add",
-                    element: <AddCustomer />,
-                },
+                    element: <AdminLayout />,
+                    children: [
+                        {
+                            path: "dashboard",
+                            element: <Dashboard />,
+                        },
+                        {
+                            path: "customers",
+                            element: <Customers />,
+                        },
+                        {
+                            path: "customers/:id",
+                            element: <CustomerDetails />,
+                        },
+                        {
+                            path: "customers/edit/:id",
+                            element: <EditCustomer />,
+                        },
+                        {
+                            path: "customers/add",
+                            element: <AddCustomer />,
+                        },
+                    ]
+                }
             ],
         },
     ];
