@@ -116,9 +116,9 @@ const CustomerDetails = () => {
                                     <p className="flex items-center"><Mail className="mr-2" size={18} /> {customer.email}</p>
                                     <p className="flex items-center"><Phone className="mr-2" size={18} /> {customer.phone_number}</p>
                                     <p className="flex items-center"><MapPin className="mr-2" size={18} /> {customer.address}</p>
-                                    <p className="flex items-center"><FileText className="mr-2" size={18} /> TIN: {customer.tin_number}</p>
+                                    <p className="flex items-center"><FileText className="mr-2" size={18} /> Serial No: {customer.serial_number}</p>
                                     <p className="flex items-center"><MapPin className="mr-2" size={18} /> State: {customer.state}</p>
-                                    <p className="flex items-center"><MapPin className="mr-2" size={18} /> LGA: {customer.lga_of_origin}</p>
+                                    <p className="flex items-center"><MapPin className="mr-2" size={18} /> LGA: {customer.lga}</p>
                                 </div>
                             </div>
                             <div>
@@ -126,7 +126,7 @@ const CustomerDetails = () => {
                                 <div className="space-y-3">
                                     <p className="flex items-center"><Car className="mr-2" size={18} /> License Plate: {customer.vehicle_number}</p>
                                     <p className="flex items-center"><Car className="mr-2" size={18} /> Vehicle Type: {customer.vehicle_type}</p>
-                                    <p className="flex items-center"><Car className="mr-2" size={18} /> Number of Tyres: {customer.number_of_tyres}</p>
+                                    <p className="flex items-center"><Car className="mr-2" size={18} /> Number of Tyres: {customer.tyres}</p>
                                     <p className="flex items-center"><Calendar className="mr-2" size={18} /> Registered: {new Date(customer.created_at).toLocaleDateString()}</p>
                                 </div>
                             </div>

@@ -19,12 +19,12 @@ const EditCustomer = () => {
         email: '',
         phone: '',
         address: '',
-        tinNumber: '',
+        serial_number: '',
         vehicleLicensePlate: '',
         vehicleType: '',
-        numberOfTyres: '',
+        tyres: '',
         state: '',
-        lgaOfOrigin: ''
+        lga: ''
     });
 
     useEffect(() => {
@@ -37,12 +37,12 @@ const EditCustomer = () => {
                     email: customerData.email,
                     phone: customerData.phone_number,
                     address: customerData.address,
-                    tinNumber: customerData.tin_number,
+                    serial_number: customerData.serial_number,
                     vehicleLicensePlate: customerData.vehicle_number,
                     vehicleType: customerData.vehicle_type,
-                    numberOfTyres: customerData.number_of_tyres,
+                    tyres: customerData.tyres,
                     state: customerData.state,
-                    lgaOfOrigin: customerData.lga_of_origin
+                    lga: customerData.lga
                 });
             } catch (error) {
                 console.error('Error fetching customer:', error);
@@ -170,10 +170,10 @@ const EditCustomer = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="tinNumber">TIN Number</Label>
+                                    <Label htmlFor="serial_number">Serial Number</Label>
                                     <Input
-                                        id="tinNumber"
-                                        value={formData.tinNumber}
+                                        id="serial_number"
+                                        value={formData.serial_number}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -206,9 +206,9 @@ const EditCustomer = () => {
                                 <div className="space-y-2">
                                     <Label htmlFor="numberOfTyres">Number of Tyres</Label>
                                     <Input
-                                        id="numberOfTyres"
+                                        id="tyres"
                                         type="number"
-                                        value={formData.numberOfTyres}
+                                        value={formData.tyres}
                                         onChange={handleChange}
                                         required
                                     />
@@ -233,8 +233,8 @@ const EditCustomer = () => {
                                 <div className="space-y-2">
                                     <Label htmlFor="lgaOfOrigin">LGA of Origin</Label>
                                     <Input
-                                        id="lgaOfOrigin"
-                                        value={formData.lgaOfOrigin}
+                                        id="lga"
+                                        value={formData.lga}
                                         onChange={handleChange}
                                         required
                                     />

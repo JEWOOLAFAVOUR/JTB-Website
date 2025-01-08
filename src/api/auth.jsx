@@ -49,6 +49,12 @@ export const addCustomer = async (customerData) => {
                 phone_number: customerData.phoneNumber,
                 address: customerData.address,
                 vehicle_number: customerData.licensePlate,
+                serial_number: customerData.serial_number,
+                vehicle_type: customerData.vehicleType,
+                state: customerData.state,
+                lga: customerData.lga,
+                tyres: customerData.tyres,
+                vehicle_type: customerData.vehicleType,
             },
         ]);
 
@@ -131,4 +137,26 @@ export const deleteCustomer = async (customerId) => {
         throw error;
     }
     return data;
+};
+
+//  Function to check if a serial number already exists
+const checkSerialNumberExists = async (serialNumber) => {
+    try {
+        const { data, error } = await supabase
+            .from('Customers')
+            .select('serial_number')
+            .eq('serial_number', serialNumber)
+            .single();  // Expecting a single row if exists
+
+        if (error) {
+            console.error('Error checking serial number:', error.message);
+            throw error;
+        }
+
+        // If data is returned, it means the serial number exists
+        return data ? true : false;
+    } catch (error) {
+        console.error('Error in checkSerialNumberExists:', error.message);
+        throw error;
+    }
 };

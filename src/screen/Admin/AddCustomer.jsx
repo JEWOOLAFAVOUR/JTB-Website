@@ -24,9 +24,9 @@ const AddCustomer = () => {
         email: '',
         phoneNumber: '',
         address: '',
-        tinNumber: '',
         licensePlate: '',
         vehicleType: '',
+        serial_number: '',
         tyres: '',
         state: '',
         lga: '',
@@ -54,6 +54,7 @@ const AddCustomer = () => {
             const response = await addCustomer(formData);
             console.log("Login response:", response);
             sendToast('success', 'Customer added successful')
+            navigate('/admin/customers');
 
         } catch (error) {
             sendToast('error', error?.message)
@@ -133,12 +134,13 @@ const AddCustomer = () => {
                                 </div>
 
                                 <div>
-                                    <label className="text-sm font-medium">TIN Number (if available)</label>
+                                    <label className="text-sm font-medium">Serial Number</label>
                                     <Input
-                                        name="tinNumber"
-                                        value={formData.tinNumber}
+                                        name="serial_number"
+                                        type='number'
+                                        value={formData.serial_number}
                                         onChange={handleChange}
-                                        placeholder="Enter TIN number"
+                                        placeholder="Enter serial number"
                                     />
                                 </div>
 

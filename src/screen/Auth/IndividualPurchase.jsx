@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import Navbar from '../../components/template/NavBar';
+import Navbar from '../../components/template/Navbar';
 import Footer from '../../components/template/Footer';
 import image1 from '../../assets/image1.jpg';
 
