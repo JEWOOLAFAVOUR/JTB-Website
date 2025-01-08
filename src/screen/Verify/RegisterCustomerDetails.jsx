@@ -12,6 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useStore } from '../../store/useStore'
 import { addCustomer } from '../../api/auth'
 import { sendToast } from '../../components/utilis'
+import NavBar from '../../components/template/Navbar'
+import { statesData, vehicleTypes } from '../../components/data'
 
 export default function RegisterCustomerDetails() {
     const navigate = useNavigate()
@@ -39,6 +41,20 @@ export default function RegisterCustomerDetails() {
         lga: '',
     });
 
+    const [lgas, setLgas] = useState([]); // LGA options for the selected state
+
+    // Handle State Selection
+    const handleStateChange = (value) => {
+        setFormData((prev) => ({ ...prev, state: value, lga: '' })); // Reset LGA on state change
+        setLgas(statesData[value] || []); // Update LGAs based on selected state
+    };
+
+    // Handle LGA Selection
+    const handleLgaChange = (value) => {
+        setFormData((prev) => ({ ...prev, lga: value }));
+    };
+
+
     // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -50,15 +66,6 @@ export default function RegisterCustomerDetails() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const states = [
-        'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue',
-        'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT',
-        'Gombe', 'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi',
-        'Kwara', 'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo',
-        'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
-    ];
-
-    const vehicleTypes = ['Sedan', 'SUV', 'Truck', 'Van', 'Bus', 'Motorcycle'];
 
 
     const handleSubmit = async (e) => {
@@ -91,6 +98,7 @@ export default function RegisterCustomerDetails() {
 
     return (
         <div className="min-h-screen bg-gray-50 py-12">
+            <NavBar />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -213,17 +221,13 @@ export default function RegisterCustomerDetails() {
 
                                 <div>
                                     <label className="text-sm font-medium">State</label>
-                                    <Select
-                                        onValueChange={(value) =>
-                                            handleSelectChange('state', value)
-                                        }
-                                    >
+                                    <Select onValueChange={handleStateChange}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select state" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {states.map((state) => (
-                                                <SelectItem key={state} value={state.toLowerCase()}>
+                                            {Object.keys(statesData).map((state) => (
+                                                <SelectItem key={state} value={state}>
                                                     {state}
                                                 </SelectItem>
                                             ))}
@@ -232,14 +236,19 @@ export default function RegisterCustomerDetails() {
                                 </div>
 
                                 <div>
-                                    <label className="text-sm font-medium">LGA of Origin</label>
-                                    <Input
-                                        required
-                                        name="lga"
-                                        value={formData.lga}
-                                        onChange={handleChange}
-                                        placeholder="Enter LGA"
-                                    />
+                                    <label className="text-sm font-medium">Local Government Area (LGA)</label>
+                                    <Select onValueChange={handleLgaChange} disabled={!formData.state}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select LGA" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {lgas.map((lga) => (
+                                                <SelectItem key={lga} value={lga}>
+                                                    {lga}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
 
