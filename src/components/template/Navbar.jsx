@@ -53,18 +53,18 @@ const NavBar = () => {
                                         className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg"
                                     >
                                         <Link
-                                            to="/individual"
+                                            to="/verify"
                                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600"
                                             onClick={() => setShowDropdown(false)}
                                         >
-                                            Individuals
+                                            Verify Sticker
                                         </Link>
                                         <Link
-                                            to="/vendors"
+                                            to="/login"
                                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600"
                                             onClick={() => setShowDropdown(false)}
                                         >
-                                            Accredited Vendors
+                                            Login User
                                         </Link>
                                     </motion.div>
                                 )}
@@ -118,18 +118,18 @@ const NavBar = () => {
                                 </Link>
                                 <div className="space-y-2">
                                     <Link
-                                        to="/individual"
+                                        to="/verify"
                                         className="block text-gray-700 hover:text-green-600 text-lg pl-4 border-l-4 border-green-600"
                                         onClick={toggleMenu}
                                     >
-                                        Individual Purchase
+                                        Verify Sticker
                                     </Link>
                                     <Link
-                                        to="/vendors"
+                                        to="/login"
                                         className="block text-gray-700 hover:text-green-600 text-lg pl-4 border-l-4 border-green-600"
                                         onClick={toggleMenu}
                                     >
-                                        Accredited Vendors
+                                        Login User
                                     </Link>
                                 </div>
                             </div>

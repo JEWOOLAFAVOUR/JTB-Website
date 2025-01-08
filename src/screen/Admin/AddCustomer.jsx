@@ -52,7 +52,7 @@ const AddCustomer = () => {
             console.log(formData)
 
             const response = await addCustomer(formData);
-            console.log("Login response:", response);
+            console.log("customer response:", response);
             sendToast('success', 'Customer added successful')
             navigate('/admin/customers');
 

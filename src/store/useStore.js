@@ -13,4 +13,3 @@ export const useStore = create((set) => ({
     setError: (error) => set({ error, customer: null }),
     clearStore: () => set({ customer: null, user: null, error: null, isLoading: false, token: null }),
 }))
-

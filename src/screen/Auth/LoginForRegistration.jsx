@@ -7,31 +7,38 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useStore } from '../../store/useStore'
+import { sendToast } from '../../components/utilis'
+import { loginUser } from '../../api/auth'
 
 export default function LoginForRegistration() {
     const navigate = useNavigate()
-    const { setUser } = useStore()
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const handleLogin = async (e) => {
         e.preventDefault()
-        setError('')
+        setIsLoading(true);
+
+        const { setUser } = useStore.getState();
+
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            console.log({ email, password })
 
-            // For demo purposes, we'll use a simple check
-            if (username === 'admin' && password === 'password') {
-                setUser({ username })
-                navigate('/register-customer')
-            } else {
-                throw new Error('Invalid credentials')
+            const response = await loginUser(email, password);
+
+            if (response) {
+                setUser(response?.user); // Save token to Zustand store
+                sendToast('success', 'Login successful');
+                navigate('/register-customer');
             }
         } catch (error) {
-            setError(error.message)
+            sendToast('error', error?.message)
+            console.error("Error during login:", error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -52,8 +59,8 @@ export default function LoginForRegistration() {
                                 <Input
                                     type="text"
                                     required
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Username"
                                 />
                             </div>
@@ -66,9 +73,12 @@ export default function LoginForRegistration() {
                                     placeholder="Password"
                                 />
                             </div>
-                            {error && <p className="text-red-500 text-sm">{error}</p>}
-                            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
-                                Login
+                            <Button
+                                type="submit"
+                                className="w-full bg-green-600 hover:bg-green-700"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Logging in...' : 'Login'}
                             </Button>
                         </form>
                     </CardContent>

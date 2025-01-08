@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/input"
 import { useStore } from '../../store/useStore'
 import image1 from '../../assets/image1.jpg';
 import { verifySticker } from '../../api/auth'
+import NavBar from '../../components/template/Navbar'
 
 
 export default function VerifySticker() {
     const navigate = useNavigate()
-    const { setCustomer, setLoading, setError } = useStore()
+    const { setCustomer, setError } = useStore()
     const [serialNumber, setSerialNumber] = React.useState('')
-    const [verificationCode, setVerificationCode] = React.useState('')
+    const [loading, setLoading] = useState(false);
 
 
     const handleVerify = async (e) => {
@@ -37,6 +38,7 @@ export default function VerifySticker() {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            <NavBar />
             <div className="relative h-[300px] bg-gray-900">
                 <img
                     src={image1}
@@ -80,7 +82,7 @@ export default function VerifySticker() {
                             />
                         </div>
                         <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
-                            Verify Sticker
+                            {loading ? "Verifying..." : "Verify Sticker"}
                         </Button>
                     </form>
                 </div>
