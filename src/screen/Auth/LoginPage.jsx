@@ -1,28 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { loginUser } from '../../api/auth';
+import { loginUser, logoutUser } from '../../api/auth';
+import { sendToast } from '../../components/utilis';
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [id]: value
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        setIsLoading(true);
+
         try {
-            // Ensure correct email and password are passed
-            let email = "jewoolafavour2020@gmail.com"
-            password: 'sjsjjs'
-            let b = await loginUser(email, password);
-            console.log({ b })
-            // navigate('/admin/dashboard'); // Redirect after successful login
+            console.log('Form data:', formData);
+
+
+            // Attempt login
+            const response = await loginUser(formData.email, formData.password);
+            console.log("Login response:", response?.session?.access_token);
+            sendToast('success', 'Login successful')
+
+            if (response) {
+                navigate('/admin/dashboard');
+            }
         } catch (error) {
+            sendToast('error', error?.message)
             console.error("Error during login:", error);
+            setError('Login failed. Please check your credentials or session.');
+        } finally {
+            setIsLoading(false);
         }
     };
-
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -41,6 +67,11 @@ const LoginPage = () => {
                     </CardHeader>
                     <form onSubmit={handleSubmit}>
                         <CardContent className="space-y-4">
+                            {error && (
+                                <div className="text-red-600 text-sm text-center">
+                                    {error}
+                                </div>
+                            )}
                             <div className="space-y-2">
                                 <label htmlFor="email" className="text-sm font-medium">
                                     Email
@@ -50,6 +81,8 @@ const LoginPage = () => {
                                     type="email"
                                     placeholder="Enter your email"
                                     required
+                                    value={formData.email}
+                                    onChange={handleChange}
                                 />
                             </div>
                             <div className="space-y-2">
@@ -61,12 +94,18 @@ const LoginPage = () => {
                                     type="password"
                                     placeholder="Enter your password"
                                     required
+                                    value={formData.password}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
-                                Login
+                            <Button
+                                type="submit"
+                                className="w-full bg-green-600 hover:bg-green-700"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Logging in...' : 'Login'}
                             </Button>
                         </CardFooter>
                     </form>
