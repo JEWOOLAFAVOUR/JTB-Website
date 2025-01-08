@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../../components/template/NavBar';
+import Navbar from '../../components/template/Navbar';
 import Footer from '../../components/template/Footer';
 import { Carousel, CarouselSlide } from '../../components/ui/carousel';
 import { Button } from '../../components/ui/button';
