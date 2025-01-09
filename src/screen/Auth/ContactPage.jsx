@@ -12,21 +12,62 @@ const ContactPage = () => {
                     <div className="container mx-auto px-4">
                         <h1 className="text-4xl font-bold mb-8 text-center">Contact Us</h1>
                         <div className="bg-white p-8 rounded-lg shadow-md">
-                            <form className="space-y-6">
+                            <form className="space-y-8">
                                 <div>
-                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-                                    <input type="text" id="name" name="name" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" required />
+                                    <label
+                                        htmlFor="name"
+                                        className="block text-lg font-medium text-gray-700"
+                                    >
+                                        Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        className="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                                        placeholder="Your Full Name"
+                                        required
+                                    />
                                 </div>
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                                    <input type="email" id="email" name="email" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" required />
+                                    <label
+                                        htmlFor="email"
+                                        className="block text-lg font-medium text-gray-700"
+                                    >
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        className="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                                        placeholder="you@example.com"
+                                        required
+                                    />
                                 </div>
                                 <div>
-                                    <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
-                                    <textarea id="message" name="message" rows="4" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" required></textarea>
+                                    <label
+                                        htmlFor="message"
+                                        className="block text-lg font-medium text-gray-700"
+                                    >
+                                        Message
+                                    </label>
+                                    <textarea
+                                        id="message"
+                                        name="message"
+                                        rows="5"
+                                        className="mt-2 w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                                        placeholder="Write your message here..."
+                                        required
+                                    ></textarea>
                                 </div>
                                 <div>
-                                    <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Send Message</button>
+                                    <button
+                                        type="submit"
+                                        className="w-full bg-blue-600 text-white text-lg font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50"
+                                    >
+                                        Send Message
+                                    </button>
                                 </div>
                             </form>
                         </div>

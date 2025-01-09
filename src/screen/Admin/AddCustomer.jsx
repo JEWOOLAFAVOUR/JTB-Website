@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { sendToast } from '../../components/utilis';
 import { addCustomer } from '../../api/auth';
 import { statesData, vehicleTypes } from '../../components/data';
+import { ArrowLeft } from 'lucide-react';
 
 const AddCustomer = () => {
     const navigate = useNavigate();
@@ -90,6 +91,14 @@ const AddCustomer = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-2xl mx-auto"
             >
+                <Button
+                    variant="ghost"
+                    onClick={() => navigate('/admin/customers')}
+                    className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
+                >
+                    <ArrowLeft className="mr-2" size={20} />
+                    Back to Customers
+                </Button>
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-2xl">Add New Customer</CardTitle>
