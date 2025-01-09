@@ -174,6 +174,7 @@ export default function RegisterCustomerDetails() {
                                     <label className="text-sm font-medium">Serial Number</label>
                                     <Input
                                         name="serial_number"
+                                        required
                                         type='number'
                                         value={formData.serial_number}
                                         onChange={handleChange}

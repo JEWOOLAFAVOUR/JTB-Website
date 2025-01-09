@@ -45,6 +45,23 @@ export const getCurrentUser = async () => {
     }
 }
 
+export const getUsers = async () => {
+    const { data, error, count } = await supabase
+        .from('Users')
+        .select('*', { count: 'exact' });
+
+    if (error) {
+        console.error('Error fetching users:', error.message);
+        throw error;
+    }
+
+    return {
+        data,
+        count
+    };
+};
+
+
 // customers
 
 export const addCustomer = async (customerData) => {

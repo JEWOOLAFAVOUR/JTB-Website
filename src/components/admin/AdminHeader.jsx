@@ -33,7 +33,7 @@ const AdminHeader = ({ onMenuToggle, title }) => {
                     <Button
                         variant="ghost"
                         className="md:hidden"
-                        onClick={() => onMenuToggle(prev => !prev)}
+                        onClick={onMenuToggle}
                     >
                         <Menu size={24} />
                     </Button>

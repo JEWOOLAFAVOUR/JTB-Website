@@ -145,6 +145,7 @@ const AddCustomer = () => {
                                 <div>
                                     <label className="text-sm font-medium">Serial Number</label>
                                     <Input
+                                        required
                                         name="serial_number"
                                         type='number'
                                         value={formData.serial_number}

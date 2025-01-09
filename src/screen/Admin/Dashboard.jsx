@@ -1,33 +1,150 @@
-import React from 'react';
+// import React, { useEffect, useState } from 'react';
+// import { motion } from 'framer-motion';
+// import { Users, TrendingUp, Car } from 'lucide-react';
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import AdminHeader from '../../components/admin/AdminHeader';
+// // import { getUsers, getCustomers } from '../../api'; // Update with correct path
+// import { getCustomers } from '../../api/auth';
+
+// const Dashboard = () => {
+// const [stats, setStats] = useState([]);
+// const [loading, setLoading] = useState(true);
+
+// useEffect(() => {
+//     const fetchStats = async () => {
+//         try {
+//             // Fetch total users and customers
+//             // const { count: userCount } = await getUsers();
+//             const { count: customerCount } = await getCustomers(1, 1); // Fetch only count
+
+//             // Update stats
+//             setStats([
+//                 // {
+//                 //     title: 'Total Users',
+//                 //     value: userCount,
+//                 //     icon: Users,
+//                 //     change: '+5%', // Example change value
+//                 //     changeType: 'positive'
+//                 // },
+//                 {
+//                     title: 'Total Customers',
+//                     value: customerCount,
+//                     icon: Car,
+//                     change: '+12.5%',
+//                     changeType: 'positive'
+//                 },
+//                 {
+//                     title: 'Monthly Growth',
+//                     value: '15.2%',
+//                     icon: TrendingUp,
+//                     change: '+4.3%',
+//                     changeType: 'positive'
+//                 }
+//             ]);
+//         } catch (error) {
+//             console.error('Error fetching stats:', error.message);
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     fetchStats();
+// }, []);
+
+// if (loading) {
+//     return <p>Loading...</p>; // Loading state
+// }
+
+//     return (
+//         <div className="dashboard-container">
+//             <AdminHeader />
+//             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//                 {stats.map((stat, index) => (
+//                     <Card key={index} className="stat-card">
+//                         <CardHeader>
+//                             <CardTitle>{stat.title}</CardTitle>
+//                         </CardHeader>
+//                         <CardContent className="flex items-center justify-between">
+//                             <motion.div>
+//                                 <stat.icon className="stat-icon" size={32} />
+//                             </motion.div>
+//                             <div>
+//                                 <h2 className="text-xl font-bold">{stat.value}</h2>
+//                                 <p className={`text-sm ${stat.changeType === 'positive' ? 'text-green-500' : 'text-red-500'}`}>
+//                                     {stat.change} from last month
+//                                 </p>
+//                             </div>
+//                         </CardContent>
+//                     </Card>
+//                 ))}
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default Dashboard;
+
+
+
+
+
+
+
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, TrendingUp, Car } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AdminHeader from '../../components/admin/AdminHeader';
+import { getCustomers } from '../../api/auth';
+
 
 const Dashboard = () => {
-    const stats = [
-        {
-            title: 'Total Customers',
-            value: '2,345',
-            icon: Users,
-            change: '+12.5%',
-            changeType: 'positive'
-        },
-        {
-            title: 'Registered Vehicles',
-            value: '3,456',
-            icon: Car,
-            change: '+23.1%',
-            changeType: 'positive'
-        },
-        {
-            title: 'Monthly Growth',
-            value: '15.2%',
-            icon: TrendingUp,
-            change: '+4.3%',
-            changeType: 'positive'
-        }
-    ];
+    const [stats, setStats] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                // Fetch total users and customers
+                // const { count: userCount } = await getUsers();
+                const { count: customerCount } = await getCustomers(1, 1); // Fetch only count
+
+                // Update stats
+                setStats([
+                    // {
+                    //     title: 'Total Users',
+                    //     value: userCount,
+                    //     icon: Users,
+                    //     change: '+5%', // Example change value
+                    //     changeType: 'positive'
+                    // },
+                    {
+                        title: 'Total Customers',
+                        value: customerCount,
+                        icon: Car,
+                        change: '+12.5%',
+                        changeType: 'positive'
+                    },
+                    // {
+                    //     title: 'Monthly Growth',
+                    //     value: '15.2%',
+                    //     icon: TrendingUp,
+                    //     change: '+4.3%',
+                    //     changeType: 'positive'
+                    // }
+                ]);
+            } catch (error) {
+                console.error('Error fetching stats:', error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
+    }, []);
+
+    if (loading) {
+        return <p>Loading...</p>; // Loading state
+    }
 
     return (
         <div className="p-4">

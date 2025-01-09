@@ -8,6 +8,7 @@ import { loginUser, logoutUser } from '../../api/auth';
 import { sendToast } from '../../components/utilis';
 import { useStore } from '../../store/useStore';
 import NavBar from '../../components/template/Navbar';
+import { makeSecurity } from '../../components/template/security';
 
 const LoginPage = () => {
     const navigate = useNavigate();
