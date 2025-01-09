@@ -109,7 +109,7 @@ const HomePage = () => {
                                                     className="bg-green-500 hover:bg-green-600 text-white min-w-[200px]"
                                                     asChild
                                                 >
-                                                    <a href="/individual">INDIVIDUAL</a>
+                                                    <a href="/verify">INDIVIDUAL</a>
                                                 </Button>
                                             </motion.div>
                                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -119,7 +119,7 @@ const HomePage = () => {
                                                     className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white min-w-[200px]"
                                                     asChild
                                                 >
-                                                    <a href="/vendors">VENDORS</a>
+                                                    <a href="/login">VENDORS</a>
                                                 </Button>
                                             </motion.div>
                                         </motion.div>

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { loginUser, logoutUser } from '../../api/auth';
 import { sendToast } from '../../components/utilis';
 import { useStore } from '../../store/useStore';
+import NavBar from '../../components/template/Navbar';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -54,6 +55,7 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <NavBar />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

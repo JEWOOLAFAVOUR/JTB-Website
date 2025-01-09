@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useStore } from '../../store/useStore'
 import { sendToast } from '../../components/utilis'
 import { loginUser } from '../../api/auth'
+import NavBar from '../../components/template/Navbar'
 
 export default function LoginForRegistration() {
     const navigate = useNavigate()
@@ -44,6 +45,7 @@ export default function LoginForRegistration() {
 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <NavBar />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
