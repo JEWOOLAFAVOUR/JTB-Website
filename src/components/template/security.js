@@ -21,3 +21,6 @@ export const makeSecurity = (type, data) => {
 
     return errors;
 };
+
+// export const baseUrl = 'http://localhost:5173/verify-sirts';
+export const baseUrl = "https://jtb-website.vercel.app/verify"

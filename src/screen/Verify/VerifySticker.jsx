@@ -24,7 +24,7 @@ export default function VerifySticker() {
     console.log({ bbb })
     useEffect(() => {
         if (bbb === undefined) {
-            navigate('//home')
+            // navigate('/home')
         } else {
             // Optionally, you could handle additional logic here, like setting the sticker number
             // setSerialNumber(bbb);

@@ -3,10 +3,11 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Button } from "@/components/ui/button";
 import { Download, Copy, Check } from 'lucide-react';
 import { sendToast } from '../utilis';
+import { baseUrl } from './security';
 
 const QRCodeGenerator = ({ stickerNumber }) => {
     const [copied, setCopied] = React.useState(false);
-    const baseUrl = 'http://localhost:5173/verify-sirts';
+    // const baseUrl = 'http://localhost:5173/verify-sirts';
     const verificationUrl = `${baseUrl}?sticker-number=${stickerNumber}`;
 
     const downloadQRCodeAsPNG = () => {
