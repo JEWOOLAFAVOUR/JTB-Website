@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { AlertCircle } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { useStore } from '../../store/useStore'
+import Footer from '../../components/template/Footer'
 
 export default function VerifyError() {
     const navigate = useNavigate()
@@ -56,6 +57,7 @@ export default function VerifyError() {
                         </Button>
                     </div>
                 </div>
+                {/* <Footer /> */}
             </motion.div>
         </div>
     )

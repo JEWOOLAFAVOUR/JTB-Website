@@ -71,6 +71,10 @@ const Routes = () => {
             element: <RouteWrapper Component={VerifySticker} />,
         },
         {
+            path: "/verify-sirts",
+            element: <RouteWrapper Component={VerifySticker} />,
+        },
+        {
             path: "/verify/success",
             element: <RouteWrapper Component={VerifySuccess} />,
         },

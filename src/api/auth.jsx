@@ -64,7 +64,24 @@ export const getUsers = async () => {
 
 // customers
 
+const generateSerialNumber = (state) => {
+    const year = new Date().getFullYear();
+    const stateCode = state.toUpperCase();
+    const randomNumber = Math.floor(10000000 + Math.random() * 90000000); // Generate an 8-digit random number
+    return `JTB/${year}/${stateCode}/${randomNumber}`;
+};
+
 export const addCustomer = async (customerData) => {
+    // Generate the serial number
+    const serialNumber = generateSerialNumber(customerData.state);
+
+    // Construct the verification URL
+    const baseUrl = 'http://localhost:5173/verify-sirts';
+    const verificationUrl = `${baseUrl}?sticker-number=${serialNumber}`;
+
+    console.log({ verificationUrl });
+
+    // Save the customer data to the database
     const { data, error } = await supabase
         .from('Customers')
         .insert([
@@ -74,12 +91,12 @@ export const addCustomer = async (customerData) => {
                 phone_number: customerData.phoneNumber,
                 address: customerData.address,
                 vehicle_number: customerData.licensePlate,
-                serial_number: customerData.serial_number,
+                serial_number: customerData.serial_number, // Use the generated serial number
                 vehicle_type: customerData.vehicleType,
                 state: customerData.state,
                 lga: customerData.lga,
                 tyres: customerData.tyres,
-                vehicle_type: customerData.vehicleType,
+                verification_url: serialNumber,
             },
         ]);
 
@@ -87,8 +104,38 @@ export const addCustomer = async (customerData) => {
         console.error('Error adding customer:', error.message);
         throw error;
     }
+
     return data;
 };
+
+
+
+
+// export const addCustomer = async (customerData) => {
+//     const { data, error } = await supabase
+//         .from('Customers')
+//         .insert([
+//             {
+//                 full_name: customerData.fullName,
+//                 email: customerData.email,
+//                 phone_number: customerData.phoneNumber,
+//                 address: customerData.address,
+//                 vehicle_number: customerData.licensePlate,
+//                 serial_number: customerData.serial_number,
+//                 vehicle_type: customerData.vehicleType,
+//                 state: customerData.state,
+//                 lga: customerData.lga,
+//                 tyres: customerData.tyres,
+//                 vehicle_type: customerData.vehicleType,
+//             },
+//         ]);
+
+//     if (error) {
+//         console.error('Error adding customer:', error.message);
+//         throw error;
+//     }
+//     return data;
+// };
 
 // Fetch customers
 export const getCustomers = async (page, pageSize) => {

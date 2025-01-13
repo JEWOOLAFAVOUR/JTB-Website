@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { sendToast } from '../../components/utilis';
 import { getCustomerById, deleteCustomer } from '../../api/auth';
+import QRCodeGenerator from '../../components/template/QRCodeGenerator';
 
 const CustomerDetails = () => {
     const { id } = useParams();
@@ -131,6 +132,14 @@ const CustomerDetails = () => {
                                 </div>
                             </div>
                         </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-2xl">Verification QR Code</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex justify-center">
+                        <QRCodeGenerator stickerNumber={customer?.verification_url} />
                     </CardContent>
                 </Card>
             </motion.div>
