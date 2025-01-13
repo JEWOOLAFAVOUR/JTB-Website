@@ -42,7 +42,7 @@ export default function VerifyError() {
 
                     <div className="space-y-4">
                         <Button
-                            onClick={() => navigate('/verify')}
+                            onClick={() => navigate(-1)}
                             className="w-full bg-green-600 hover:bg-green-700"
                         >
                             Try Again
