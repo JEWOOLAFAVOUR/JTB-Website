@@ -1,93 +1,180 @@
 'use client'
 
 import React, { useState } from 'react'
-import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useStore } from '../../store/useStore'
-import image1 from '../../assets/image1.jpg';
 import { verifySticker } from '../../api/auth'
 import NavBar from '../../components/template/Navbar'
-
+import image1 from '../../assets/image1.jpg';
 
 export default function VerifySticker() {
     const navigate = useNavigate()
     const { setCustomer, setError } = useStore()
-    const [serialNumber, setSerialNumber] = React.useState('')
-    const [loading, setLoading] = useState(false);
-
+    const [serialNumber, setSerialNumber] = useState('')
+    const [loading, setLoading] = useState(false)
 
     const handleVerify = async (e) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            console.log({ serialNumber })
-            const stickerData = await verifySticker(serialNumber); // Call the API function
-            console.log({ stickerData })
-            setCustomer(stickerData); // Save sticker data in state
-            navigate(`/verify/success`); // Navigate to success page
+            const stickerData = await verifySticker(serialNumber);
+            setCustomer(stickerData);
+            navigate(`/verify/success`);
         } catch (err) {
             setError('Invalid serial number. Please try again.');
-            navigate('/verify/error'); // Navigate to error page
+            navigate('/verify/error');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-white">
             <NavBar />
-            <div className="relative h-[300px] bg-gray-900">
-                <img
-                    src={image1}
-                    alt="Traffic"
-                    className="w-full h-full object-cover opacity-50"
-                />
+            <div className="relative h-[500px]">
+                <div className="absolute inset-0 bg-black/50">
+                    <img
+                        src={image1}
+                        alt="Traffic"
+                        className="w-full h-full object-cover opacity-50"
+                    />
+                </div>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-4xl font-bold text-center mb-4"
-                    >
+                    <h1 className="text-5xl font-bold text-center mb-4">
                         Single Inter-State Road Tax Sticker
-                    </motion.h1>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="text-xl"
-                    >
+                    </h1>
+                    <p className="text-2xl">
                         Sticker Verification
-                    </motion.p>
+                    </p>
                 </div>
             </div>
 
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="max-w-md mx-auto p-6 -mt-16 relative z-10"
-            >
-                <div className="bg-white rounded-lg shadow-xl p-6">
-                    <form onSubmit={handleVerify} className="space-y-4">
-                        <div>
+            <div className="max-w-[600px] mx-auto p-8 -mt-32 relative z-10">
+                <div className="bg-white rounded-lg shadow-lg p-8">
+                    <form onSubmit={handleVerify} className="space-y-6">
+                        <div className="bg-green-500 p-4 rounded-lg">
                             <Input
-                                placeholder="Enter Serial Number"
-                                value={serialNumber}
-                                onChange={(e) => setSerialNumber(e.target.value)}
-                                required
-                                className="w-full"
+                                value="JTB/2025/ZAMFARA/79073406"
+                                disabled
+                                className="w-full h-12 text-lg bg-white border-0 focus:ring-0 cursor-default"
                             />
                         </div>
-                        <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
+                        <Input
+                            placeholder="Input Serial Number"
+                            value={serialNumber}
+                            onChange={(e) => setSerialNumber(e.target.value)}
+                            required
+                            className="w-full h-12 text-lg border-gray-300"
+                        />
+                        <Button
+                            type="submit"
+                            className="w-full h-12 text-lg bg-green-500 hover:bg-green-600 text-white font-semibold"
+                        >
                             {loading ? "Verifying..." : "Verify Sticker"}
                         </Button>
                     </form>
                 </div>
-            </motion.div>
+            </div>
         </div>
     )
 }
+
+
+
+
+// 'use client'
+
+// import React, { useState } from 'react'
+// import { motion } from 'framer-motion'
+// import { useNavigate } from 'react-router-dom'
+// import { Button } from "@/components/ui/button"
+// import { Input } from "@/components/ui/input"
+// import { useStore } from '../../store/useStore'
+// import image1 from '../../assets/image1.jpg';
+// import { verifySticker } from '../../api/auth'
+// import NavBar from '../../components/template/Navbar'
+
+
+// export default function VerifySticker() {
+//     const navigate = useNavigate()
+//     const { setCustomer, setError } = useStore()
+//     const [serialNumber, setSerialNumber] = React.useState('')
+//     const [loading, setLoading] = useState(false);
+
+
+//     const handleVerify = async (e) => {
+//         e.preventDefault();
+//         setLoading(true);
+
+//         try {
+//             console.log({ serialNumber })
+//             const stickerData = await verifySticker(serialNumber); // Call the API function
+//             console.log({ stickerData })
+//             setCustomer(stickerData); // Save sticker data in state
+//             navigate(`/verify/success`); // Navigate to success page
+//         } catch (err) {
+//             setError('Invalid serial number. Please try again.');
+//             navigate('/verify/error'); // Navigate to error page
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     return (
+//         <div className="min-h-screen bg-gray-50">
+//             <NavBar />
+//             <div className="relative h-[300px] bg-gray-900">
+//                 <img
+//                     src={image1}
+//                     alt="Traffic"
+//                     className="w-full h-full object-cover opacity-50"
+//                 />
+//                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+//                     <motion.h1
+//                         initial={{ opacity: 0, y: 20 }}
+//                         animate={{ opacity: 1, y: 0 }}
+//                         className="text-4xl font-bold text-center mb-4"
+//                     >
+//                         Single Inter-State Road Tax Sticker
+//                     </motion.h1>
+//                     <motion.p
+//                         initial={{ opacity: 0, y: 20 }}
+//                         animate={{ opacity: 1, y: 0 }}
+//                         transition={{ delay: 0.1 }}
+//                         className="text-xl"
+//                     >
+//                         Sticker Verification
+//                     </motion.p>
+//                 </div>
+//             </div>
+
+//             <motion.div
+//                 initial={{ opacity: 0, y: 20 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.2 }}
+//                 className="max-w-md mx-auto p-6 -mt-16 relative z-10"
+//             >
+//                 <div className="bg-white rounded-lg shadow-xl p-6">
+//                     <form onSubmit={handleVerify} className="space-y-4">
+//                         <div>
+//                             <Input
+//                                 placeholder="Enter Serial Number"
+//                                 value={serialNumber}
+//                                 onChange={(e) => setSerialNumber(e.target.value)}
+//                                 required
+//                                 className="w-full"
+//                             />
+//                         </div>
+//                         <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
+//                             {loading ? "Verifying..." : "Verify Sticker"}
+//                         </Button>
+//                     </form>
+//                 </div>
+//             </motion.div>
+//         </div>
+//     )
+// }
 
