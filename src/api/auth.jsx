@@ -63,52 +63,85 @@ export const getUsers = async () => {
 
 
 // customers
-
-const generateSerialNumber = (state) => {
+const generateVerificationLink = (state) => {
     const year = new Date().getFullYear();
-    const stateCode = state.toUpperCase();
-    const randomNumber = Math.floor(10000000 + Math.random() * 90000000); // Generate an 8-digit random number
+    const stateCode = state ? state.toUpperCase() : 'UNK';
+    const randomNumber = Math.floor(10000000 + Math.random() * 90000000);
     return `JTB/${year}/${stateCode}/${randomNumber}`;
 };
 
-export const addCustomer = async (customerData) => {
-    // Generate the serial number
-    const serialNumber = generateSerialNumber(customerData.state);
 
-    // Construct the verification URL
-    const baseUrl = 'http://localhost:5173/verify-sirts';
-    const verificationUrl = `${baseUrl}?sticker-number=${serialNumber}`;
+const generateSerialNumber = async (state) => {
+    const year = new Date().getFullYear();
+    const stateCode = state ? state.toUpperCase() : 'UNK';
 
-    console.log({ verificationUrl });
-
-    // Save the customer data to the database
-    const { data, error } = await supabase
+    // Fetch the last serial number from the database
+    const { data: customers, error } = await supabase
         .from('Customers')
-        .insert([
-            {
-                full_name: customerData.fullName,
-                email: customerData.email,
-                phone_number: customerData.phoneNumber,
-                address: customerData.address,
-                vehicle_number: customerData.licensePlate,
-                serial_number: customerData.serial_number, // Use the generated serial number
-                vehicle_type: customerData.vehicleType,
-                state: customerData.state,
-                lga: customerData.lga,
-                tyres: customerData.tyres,
-                verification_url: serialNumber,
-            },
-        ]);
+        .select('serial_number')
+        .order('id', { ascending: false })
+        .limit(1);
 
     if (error) {
-        console.error('Error adding customer:', error.message);
+        console.error('Error fetching last serial number:', error.message);
         throw error;
     }
 
-    return data;
+    // Extract the last serial number and increment it
+    let lastSerialNumber = 50000; // Default start value
+    if (customers && customers.length > 0) {
+        const lastSerial = customers[0].serial_number;
+        const match = lastSerial.match(/\/(\d{5,})$/); // Extract the number part at the end
+        if (match) {
+            lastSerialNumber = parseInt(match[1], 10); // Parse the number
+        }
+    }
+
+    const newSerialNumber = lastSerialNumber + 1;
+    return newSerialNumber
 };
 
+export const addCustomer = async (customerData) => {
+    try {
+        // Generate the serial number
+        const serialNumber = customerData.serial_number || await generateSerialNumber(customerData.state);
 
+        const verificationUrl = generateVerificationLink(customerData.state);
+
+        console.log({ verificationUrl });
+
+        // Prepare the customer data, using empty string for null values
+        const customerDataToInsert = {
+            full_name: customerData.fullName || '',
+            email: customerData.email || '',
+            phone_number: customerData.phoneNumber || '',
+            address: customerData.address || '',
+            vehicle_number: customerData.licensePlate || '',
+            serial_number: serialNumber,
+            vehicle_type: customerData.vehicleType || '',
+            state: customerData.state || '',
+            lga: customerData.lga || '',
+            tyres: customerData.tyres || '',
+            verification_url: verificationUrl,
+        };
+
+        console.log({ customerDataToInsert });
+
+        // Save the customer data to the database
+        const { data, error } = await supabase
+            .from('Customers')
+            .insert([customerDataToInsert]);
+
+        if (error) {
+            console.error('Error adding customer:', error.message);
+            throw error;
+        }
+        return data;
+    } catch (error) {
+        console.error('Error in addCustomer:', error.message);
+        throw error;
+    }
+};
 
 
 // export const addCustomer = async (customerData) => {
@@ -134,7 +167,7 @@ export const addCustomer = async (customerData) => {
 //         console.error('Error adding customer:', error.message);
 //         throw error;
 //     }
-//     return data;
+// return data;
 // };
 
 // Fetch customers

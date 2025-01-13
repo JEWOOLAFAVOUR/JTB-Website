@@ -109,7 +109,7 @@ const AddCustomer = () => {
                                 <div>
                                     <label className="text-sm font-medium">Full Name</label>
                                     <Input
-                                        required
+                                        // required
                                         name="fullName"
                                         value={formData.fullName}
                                         onChange={handleChange}
@@ -121,7 +121,7 @@ const AddCustomer = () => {
                                     <label className="text-sm font-medium">Email</label>
                                     <Input
                                         type="email"
-                                        required
+                                        // required
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
@@ -132,7 +132,7 @@ const AddCustomer = () => {
                                 <div>
                                     <label className="text-sm font-medium">Phone Number</label>
                                     <Input
-                                        required
+                                        // required
                                         name="phoneNumber"
                                         value={formData.phoneNumber}
                                         onChange={handleChange}
@@ -143,7 +143,7 @@ const AddCustomer = () => {
                                 <div>
                                     <label className="text-sm font-medium">Address</label>
                                     <Textarea
-                                        required
+                                        // required
                                         name="address"
                                         value={formData.address}
                                         onChange={handleChange}
@@ -154,7 +154,7 @@ const AddCustomer = () => {
                                 <div>
                                     <label className="text-sm font-medium">Serial Number</label>
                                     <Input
-                                        required
+                                        // required
                                         name="serial_number"
                                         type='number'
                                         value={formData.serial_number}
@@ -166,7 +166,7 @@ const AddCustomer = () => {
                                 <div>
                                     <label className="text-sm font-medium">Vehicle License Plate Number</label>
                                     <Input
-                                        required
+                                        // required
                                         name="licensePlate"
                                         value={formData.licensePlate}
                                         onChange={handleChange}
@@ -198,7 +198,7 @@ const AddCustomer = () => {
                                     <label className="text-sm font-medium">Number of Tyres</label>
                                     <Input
                                         type="number"
-                                        required
+                                        // required
                                         name="tyres"
                                         value={formData.tyres}
                                         onChange={handleChange}
