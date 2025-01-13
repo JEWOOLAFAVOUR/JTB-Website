@@ -43,6 +43,10 @@ const Routes = () => {
             element: <RouteWrapper Component={HomePage} />,
         },
         {
+            path: "/home",
+            element: <RouteWrapper Component={HomePage} />,
+        },
+        {
             path: "/login",
             element: <RouteWrapper Component={LoginPage} />,
         },

@@ -21,14 +21,17 @@ export default function VerifySticker() {
 
     const bbb = searchParams.get('sticker-number') || vU;
 
-
+    console.log({ bbb })
     useEffect(() => {
-        const stickerNumber = searchParams.get('sticker-number');
-        if (stickerNumber) {
-            // setSerialNumber(stickerNumber);
-            // handleVerify(null, stickerNumber);
+        if (bbb === undefined) {
+            navigate('//home')
+        } else {
+            // Optionally, you could handle additional logic here, like setting the sticker number
+            // setSerialNumber(bbb);
+            // handleVerify(null, bbb); // Uncomment this if needed for verification
         }
-    }, [searchParams]);
+    }, [bbb, navigate]);
+
 
     const handleVerify = async (e, stickerNumberFromQR = null) => {
         if (e) e.preventDefault();
