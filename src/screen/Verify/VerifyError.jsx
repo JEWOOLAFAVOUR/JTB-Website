@@ -47,14 +47,14 @@ export default function VerifyError() {
                         >
                             Try Again
                         </Button>
-
+                        {/* 
                         <Button
                             onClick={() => navigate('/register-customer')}
                             variant="outline"
                             className="w-full"
                         >
                             Register New Sticker
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
                 {/* <Footer /> */}

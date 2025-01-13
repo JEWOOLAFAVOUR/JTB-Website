@@ -207,19 +207,19 @@ export const getCustomerById = async (customerId) => {
 
 // Update customer
 export const updateCustomer = async (customerId, customerData) => {
+    console.log({ customerData })
     const { data, error } = await supabase
         .from('Customers')
         .update({
-            full_name: customerData.name,
+            full_name: customerData.name || customerData.fullName,
             email: customerData.email,
-            phone_number: customerData.phone,
+            phone_number: customerData.phone || customerData.phoneNumber,
             address: customerData.address,
-            tin_number: customerData.tinNumber,
-            vehicle_number: customerData.vehicleLicensePlate,
+            vehicle_number: customerData.vehicleLicensePlate || customerData.licensePlate,
             vehicle_type: customerData.vehicleType,
-            number_of_tyres: customerData.numberOfTyres,
+            tyres: customerData.numberOfTyres || customerData.tyres,
             state: customerData.state,
-            lga_of_origin: customerData.lgaOfOrigin
+            lga: customerData.lgaOfOrigin || customerData.lga,
         })
         .eq('id', customerId);
 

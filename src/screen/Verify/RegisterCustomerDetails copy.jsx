@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useStore } from '../../store/useStore'
-import { updateCustomer } from '../../api/auth'
+import { addCustomer } from '../../api/auth'
 import { sendToast } from '../../components/utilis'
 import NavBar from '../../components/template/Navbar'
 import { statesData, vehicleTypes } from '../../components/data'
@@ -20,15 +20,13 @@ export default function RegisterCustomerDetails() {
     const { user } = useStore()
     const [isLoading, setIsLoading] = useState(false);
 
-    console.log({ user })
-
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    React.useEffect(() => {
-        if (!user) {
-            navigate('/verify')
-        }
-    }, [user, navigate])
+    // React.useEffect(() => {
+    //     if (!user) {
+    //         navigate('/verify')
+    //     }
+    // }, [user, navigate])
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -37,7 +35,7 @@ export default function RegisterCustomerDetails() {
         address: '',
         licensePlate: '',
         vehicleType: '',
-        // serial_number: '',
+        serial_number: '',
         tyres: '',
         state: '',
         lga: '',
@@ -76,18 +74,18 @@ export default function RegisterCustomerDetails() {
         const { clearUser } = useStore.getState();
 
         try {
-            console.log({ formData });
+            console.log(formData);
 
-            const response = await updateCustomer(user?.id, formData);
+            const response = await addCustomer(formData);
             console.log("Customer response:", response);
 
-            sendToast('success', 'Customer Updated successfully');
+            sendToast('success', 'Customer added successfully');
 
             console.log("Clearing user...");
             clearUser(); // This clears the user
             console.log("User after clear:", useStore.getState().user);
 
-            navigate('/verify', { state: { verification_url: user?.verification_url } });
+            navigate('/verify');
         } catch (error) {
             if (error?.code == 23505) {
                 sendToast('error', 'Serial number already exists');
@@ -176,8 +174,11 @@ export default function RegisterCustomerDetails() {
                                     <label className="text-sm font-medium">Serial Number</label>
                                     <Input
                                         name="serial_number"
-                                        value={user.serial_number}
-                                        disabled
+                                        required
+                                        type='number'
+                                        value={formData.serial_number}
+                                        onChange={handleChange}
+                                        placeholder="Enter serial number"
                                     />
                                 </div>
 
