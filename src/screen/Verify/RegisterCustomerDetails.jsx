@@ -22,11 +22,11 @@ export default function RegisterCustomerDetails() {
 
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    React.useEffect(() => {
-        if (!user) {
-            navigate('/verify')
-        }
-    }, [user, navigate])
+    // React.useEffect(() => {
+    //     if (!user) {
+    //         navigate('/verify')
+    //     }
+    // }, [user, navigate])
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -99,7 +99,7 @@ export default function RegisterCustomerDetails() {
 
 
 
-    if (!user) return null
+    // if (!user) return null
 
     return (
         <div className="min-h-screen bg-gray-50 py-12">

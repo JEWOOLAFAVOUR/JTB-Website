@@ -48,7 +48,7 @@ export default function VerifyError() {
                         </Button>
 
                         <Button
-                            onClick={() => navigate('/login-for-registration')}
+                            onClick={() => navigate('/register-customer')}
                             variant="outline"
                             className="w-full"
                         >
